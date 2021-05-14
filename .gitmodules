@@ -1,0 +1,6 @@
+[submodule "externals/cxxopts"]
+	path = externals/cxxopts
+	url = https://github.com/jarro2783/cxxopts.git
+[submodule "externals/rapidjson"]
+	path = externals/rapidjson
+	url = https://github.com/Tencent/rapidjson.git
