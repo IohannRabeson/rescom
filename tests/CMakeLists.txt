@@ -1,1 +1,2 @@
 add_subdirectory(project_test)
+add_subdirectory(empty_project_test)

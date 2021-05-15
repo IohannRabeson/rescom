@@ -1,12 +1,10 @@
 #include "rescom.hpp"
 
-#include <cassert>
+#include <gtest/gtest.h>
 
-int main() {
+TEST(ProjectTests, simple) {
     auto const& slot = rescom::getResource("test.txt");
 
-    assert( std::string_view(slot.buffer, slot.size) == "Hello world!" );
-
-    return 0;
+    EXPECT_EQ( std::string_view(slot.buffer, slot.size), "Hello world!" );
 }
 
