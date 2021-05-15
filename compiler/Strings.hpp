@@ -1,6 +1,7 @@
 #ifndef RESCOM_STRINGS_HPP
 #define RESCOM_STRINGS_HPP
 #include <string>
+#include <string_view>
 #include <algorithm>
 
 inline void replaceAll(std::string& str, char toReplace, char replacement)
