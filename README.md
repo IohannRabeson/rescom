@@ -3,13 +3,31 @@
 C++ resource compiler using CMake
 
  - Tested on Windows, Linux and OSX
- - Resources can be used at compile time
- - Easy to use with CMake
- - Constexpr
+ - Resources can be used at compile time (rescom::getResource is constexpr)
+ - Easy to use and integrate with CMake
 
 ## Requirements
  - C++ compiler with minimal C++20 support
  - CMake 3.9 or later
+
+## How to clone
+Mind to also clone submodules with option `--recursive`:
+```shell
+git clone --recursive git@github.com:IohannRabeson/rescom.git
+```
+If you missed it, you can ensure all the submodules are properly cloned with:
+```shell
+cd rescom && git submodule update --init --recursive
+```
+If you use `rescom` as submodule:
+```shell
+git submodule add git@github.com:IohannRabeson/rescom.git
+git submodule update --init --recursive
+```
+
+
+## How to build tests
+You must set the variable `RESCOM_TEST` to `ON`.
 
 ## Tutorial
 
