@@ -1,4 +1,5 @@
 add_executable(empty_project_test main.cpp)
 add_test(NAME empty_project_test COMMAND empty_project_test)
 target_link_libraries(empty_project_test PRIVATE Catch2::Catch2WithMain)
+set_target_properties(empty_project_test PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON CXX_STANDARD_REQUIRED ON)
 rescom_compile(empty_project_test ${CMAKE_CURRENT_SOURCE_DIR}/resources/files.rescom)

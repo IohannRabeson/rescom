@@ -1,4 +1,5 @@
 add_executable(comments_tests main.cpp)
-add_test(NAME comments_tests COMMAND project_test)
+add_test(NAME comments_tests COMMAND comments_tests)
 target_link_libraries(comments_tests PRIVATE Catch2::Catch2WithMain)
+set_target_properties(comments_tests PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON CXX_STANDARD_REQUIRED ON)
 rescom_compile(comments_tests ${CMAKE_CURRENT_SOURCE_DIR}/resources/files.rescom)
