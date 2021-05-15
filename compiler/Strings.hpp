@@ -23,4 +23,19 @@ inline std::string toUpper(std::string str)
     return str;
 }
 
+inline bool isSpace(char c)
+{
+    return std::isspace(static_cast<unsigned char>(c));
+}
+
+inline std::string_view trim(std::string const& str)
+{
+    std::string_view view{str};
+
+    view.remove_prefix(std::min(view.find_first_not_of(" "), view.size()));
+    view.remove_suffix(view.size() - std::min(view.find_last_not_of(" ") + 1, view.size()));
+
+    return view;
+}
+
 #endif //RESCOM_STRINGS_HPP

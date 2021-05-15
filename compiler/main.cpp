@@ -30,15 +30,17 @@ int main(int argc, char** argv)
     std::filesystem::path const inputFilePath{parseResult["input"].as<std::string>()};
     std::ofstream outputFile{outputFilePath, std::ios::out};
 
-    if (auto configuration = Configuration::fromFile(inputFilePath); configuration.has_value())
+    try
     {
-        Compiler c(configuration.value());
+        auto configuration = Configuration::fromFile(inputFilePath);
+        Compiler c(configuration);
+        c.compile(selectOutputStream(outputFile, std::cout));
+    }
+    catch (std::exception const& error)
+    {
+        std::cerr << "Rescom error: " << error.what() << "\n";
 
-        switch (c.compile(selectOutputStream(outputFile, std::cout)))
-        {
-            case CompilationResult::Ok: break;
-            case CompilationResult::Error: break;
-        }
+        return 1;
     }
 
     return 0;

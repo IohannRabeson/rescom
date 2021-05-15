@@ -6,24 +6,26 @@
 #include <fstream>
 #include <iterator>
 #include <iostream>
+#include <stdexcept>
+
+#include <fmt/core.h>
 
 namespace
 {
     static constexpr char const* NamespaceForResourceData = "rescom";
 
-    bool loadFile(std::filesystem::path const& filePath, std::vector<char>& buffer)
+    void loadFile(std::filesystem::path const& filePath, std::vector<char>& buffer)
     {
         std::ifstream file{filePath, std::ios::binary};
 
         if (file.is_open())
         {
             buffer.assign(std::istreambuf_iterator<char>(file), {});
-
-            return true;
         }
-
-        std::cerr << "Unable to read '" << filePath << "'\n";
-        return false;
+        else
+        {
+            throw std::runtime_error(fmt::format("unable to read '{}'", filePath.generic_string()));
+        }
     }
 }
 
@@ -168,9 +170,7 @@ CompilationResult Compiler::writeResources(std::ostream& output)
     output << tab(2) << "{\n";
     for (auto const& input : _configuration.inputs)
     {
-        if (!loadFile(input.filePath, buffer))
-            return CompilationResult::Error;
-
+        loadFile(input.filePath, buffer);
         writeResource(input, buffer, output);
     }
 
