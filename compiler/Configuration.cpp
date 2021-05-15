@@ -1,7 +1,9 @@
 #include "Configuration.hpp"
 #include "Strings.hpp"
+
 #include <fstream>
 #include <iostream>
+#include <cassert>
 
 namespace
 {
