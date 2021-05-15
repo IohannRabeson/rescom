@@ -26,11 +26,6 @@ int main(int argc, char** argv)
 
     auto parseResult = options.parse(argc, argv);
 
-    if (parseResult.count("input") != 1) {
-        std::cerr << "usage: rescom -i <input file> [-o <output file>]\n";
-        return 1;
-    }
-
     std::filesystem::path const outputFilePath{parseResult.count("output") > 0 ? parseResult["output"].as<std::string>() : ""};
     std::filesystem::path const inputFilePath{parseResult["input"].as<std::string>()};
     std::ofstream outputFile{outputFilePath, std::ios::out};

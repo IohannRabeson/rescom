@@ -131,17 +131,30 @@ void Compiler::writeAccessFunction(std::ostream& output)
               "        return first;\n"
               "    }\n"
               "\n";
+
+    if (_configuration.inputs.empty())
+        output << "static constexpr ResourceSlot const NullResourceSlot{nullptr, 0u, nullptr};\n";
+
     output << "} // namespace details\n";
 
-    output << tab() << "inline constexpr ResourceSlot const& getResource(char const* key)\n"
-           << tab() << "{\n"
-           << tab(2) << "auto it = details::lowerBound(std::begin(details::Slots), std::end(details::Slots), key, details::compareSlot);\n"
-           << "\n"
-           << tab(2) << "if (it == std::end(details::Slots))\n"
-           << tab(3) << "throw std::range_error(\"invalid resource key\");\n"
-           << "\n"
-           << tab(2) << "return *it;\n"
-           << tab() << "}\n";
+    if (_configuration.inputs.empty())
+    {
+        output << tab() << "inline constexpr ResourceSlot const& getResource(char const* key)\n"
+               << tab() << "{\n"
+               << tab(3) << "return details::NullResourceSlot;\n"
+               << tab() << "}\n";    }
+    else
+    {
+        output << tab() << "inline constexpr ResourceSlot const& getResource(char const* key)\n"
+               << tab() << "{\n"
+               << tab(2) << "auto it = details::lowerBound(std::begin(details::Slots), std::end(details::Slots), key, details::compareSlot);\n"
+               << "\n"
+               << tab(2) << "if (it == std::end(details::Slots))\n"
+               << tab(3) << "throw std::range_error(\"invalid resource key\");\n"
+               << "\n"
+               << tab(2) << "return *it;\n"
+               << tab() << "}\n";
+    }
 }
 
 CompilationResult Compiler::writeResources(std::ostream& output)
