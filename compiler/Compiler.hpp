@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-class Configuration;
-class Input;
+struct Configuration;
+struct Input;
 
 enum CompilationResult
 {
