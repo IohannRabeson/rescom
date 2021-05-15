@@ -35,6 +35,9 @@ Compiler::Compiler(Configuration const& configuration)
 
 std::string Compiler::tab(unsigned int count) const
 {
+    if (count == 0)
+        return {};
+
     std::string result;
 
     result.reserve(count * _tabulation.size());
@@ -65,29 +68,31 @@ void Compiler::writeFileHeader(std::ostream& output)
     output << "#include <stdexcept>\n";
     output << "#include <iterator>\n";
     output << "#include <string>\n";
+    output << "\n";
+    output << tab(0) << "namespace " << NamespaceForResourceData << "\n{\n";
 
-    output << "namespace " << NamespaceForResourceData << "\n{\n";
-
-    output << tab() << "struct Resource\n"
-           << tab() << "{\n"
+    output << tab(1) << "struct Resource\n"
+           << tab(1) << "{\n"
            << tab(2) << "char const* const key;\n"
            << tab(2) << "char const* const bytes;\n"
            << tab(2) << "unsigned int const size;\n"
-           << tab(2) << "constexpr Resource(char const* key, unsigned int size, char const* bytes) : key(key), bytes(bytes), size(size) {}\n"
-           << tab() << "};\n";
+           << "\n"
+           << tab(2) << "constexpr Resource(char const* key, unsigned int size, char const* bytes)\n"
+           << tab(2) << ": key(key), bytes(bytes), size(size) {}\n"
+           << tab(1) << "};\n\n";
 }
 
 void Compiler::writeFileFooter(std::ostream& output)
 {
     auto resourceFileStem = toUpper(_configuration.configurationFilePath.stem().generic_string());
 
-    output << "} // namespace " << NamespaceForResourceData << "\n";
+    output << tab(0) << "} // namespace " << NamespaceForResourceData << "\n";
     output << "#endif // RESCOM_GENERATED_FILE_" << resourceFileStem << "\n";
 }
 
 void Compiler::writeResource(Input const& input, std::vector<char> const& bytes, std::ostream& output)
 {
-    output << tab(2) << "{\"" << input.key << "\", " << input.size << ", " << "\"";
+    output << tab(3) << "{\"" << input.key << "\", " << input.size << ", " << "\"";
 
     output << std::hex;
 
@@ -105,36 +110,28 @@ void Compiler::writeResource(Input const& input, std::vector<char> const& bytes,
 void Compiler::writeAccessFunction(std::ostream& output)
 {
     output << "\n";
-    output << "namespace details {\n";
-    output << tab() << "constexpr bool compareSlot(Resource const& slot, char const * key) { return std::string_view(slot.key) < key; }\n";
+    output << tab(1) << "namespace details {\n";
+    output << tab(2) << "constexpr bool compareSlot(Resource const& slot, char const * key) { return std::string_view(slot.key) < key; }\n\n";
     // Function lowerBound is an ugly copy-paste of https://en.cppreference.com/w/cpp/algorithm/lower_bound.
     // But I don't care, it's constexpr and it just works.
-    output << "    template<class ForwardIt, class T, class Compare>\n"
-              "    constexpr ForwardIt lowerBound(ForwardIt first, ForwardIt last, T const& value, Compare comp)\n"
-              "    {\n"
-              "        ForwardIt it;\n"
-              "        typename std::iterator_traits<ForwardIt>::difference_type count, step;\n"
-              "        count = std::distance(first, last);\n"
-              "\n"
-              "        while (count > 0) {\n"
-              "            it = first;\n"
-              "            step = count / 2;\n"
-              "            std::advance(it, step);\n"
-              "            if (comp(*it, value)) {\n"
-              "                first = ++it;\n"
-              "                count -= step + 1;\n"
-              "            }\n"
-              "            else\n"
-              "                count = step;\n"
-              "        }\n"
-              "        return first;\n"
-              "    }\n"
-              "\n";
+    output << tab(2) << "template<class ForwardIt, class T, class Compare>\n"
+           << tab(2) << "constexpr ForwardIt lowerBound(ForwardIt first, ForwardIt last, T const& value, Compare compare)\n"
+           << tab(2) << "{\n"
+           << tab(3) << "typename std::iterator_traits<ForwardIt>::difference_type count;\n"
+           << tab(3) << "typename std::iterator_traits<ForwardIt>::difference_type step;\n"
+           << tab(3) << "count = std::distance(first, last);\n"
+           << tab(3) << "ForwardIt it;\n"
+           << tab(3) << "while (count > 0u) {\n"
+           << tab(4) << "it = first; step = count / 2; std::advance(it, step);\n"
+           << tab(4) << "if (compare(*it, value)) { first = ++it; count -= step + 1; } else { count = step; }\n"
+           << tab(3) << "}\n"
+           << tab(3) << "return first;\n"
+           << tab(2) << "}\n";
 
     if (_configuration.inputs.empty())
-        output << "static constexpr Resource const NullResourceSlot{nullptr, 0u, nullptr};\n";
+        output << tab(2) << "static constexpr Resource const NullResourceSlot{nullptr, 0u, nullptr};\n";
 
-    output << "} // namespace details\n";
+    output << tab(1) << "} // namespace details\n\n";
 
     if (_configuration.inputs.empty())
     {
@@ -165,10 +162,10 @@ CompilationResult Compiler::writeResources(std::ostream& output)
 
     buffer.reserve(1024 * 16);
 
-    output << "namespace details {\n";
-    output << tab() << "constexpr unsigned int const ResourcesCount = " << _configuration.inputs.size() << ";\n";
-    output << tab() << "constexpr Resource const Slots[ResourcesCount] = \n";
-    output << tab() << "{\n";
+    output << tab(1) << "namespace details {\n";
+    output << tab(2) << "constexpr unsigned int const ResourcesCount = " << _configuration.inputs.size() << ";\n";
+    output << tab(2) << "constexpr Resource const Slots[ResourcesCount] = \n";
+    output << tab(2) << "{\n";
     for (auto const& input : _configuration.inputs)
     {
         if (!loadFile(input.filePath, buffer))
@@ -177,8 +174,8 @@ CompilationResult Compiler::writeResources(std::ostream& output)
         writeResource(input, buffer, output);
     }
 
-    output << tab() << "};\n";
-    output << "} // namespace details\n";
+    output << tab(2) << "};\n";
+    output << tab(1) << "} // namespace details\n";
 
     return CompilationResult::Ok;
 }
