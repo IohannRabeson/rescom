@@ -4,20 +4,32 @@
 #include <fstream>
 #include <iostream>
 #include <cassert>
+#include <stdexcept>
+
+#include <fmt/core.h>
+
+static constexpr char const* const OneLineCommentStart = "#";
 
 namespace
 {
     std::string generateKey(std::filesystem::path const& inputFilePath)
     {
         assert(inputFilePath.is_relative());
+
         auto path = inputFilePath.generic_string();
+
         replaceAll(path, std::filesystem::path::preferred_separator, '_');
         replaceAll(path, '.', '_');
         return path;
     }
 }
 
-std::optional<Configuration> Configuration::fromFile(std::filesystem::path const& configurationFilePath)
+inline std::string_view cleanLine(std::string_view view, char const* oneLineCommentStart)
+{
+    return trim(removeComment(view, oneLineCommentStart));
+}
+
+Configuration Configuration::fromFile(std::filesystem::path const& configurationFilePath)
 {
     std::ifstream configurationFile(configurationFilePath, std::ifstream::in);
     std::string lineBuffer;
@@ -25,37 +37,38 @@ std::optional<Configuration> Configuration::fromFile(std::filesystem::path const
 
     if (!configurationFile.is_open())
     {
-        std::cerr << "Unable to open configuration file '" << configurationFilePath << "'\n";
-        return {};
+        throw std::runtime_error(fmt::format("unable to read '{}'", configurationFilePath.generic_string()));
     }
+
+    std::size_t linePosition = 1u;
 
     while (std::getline(configurationFile, lineBuffer))
     {
-        auto const configurationDirectory = configurationFilePath.parent_path();
-        auto const absoluteInputPath{configurationDirectory / lineBuffer};
+        auto const fileName = cleanLine(lineBuffer, OneLineCommentStart);
 
-        if (!std::filesystem::exists(absoluteInputPath))
+        if (!fileName.empty())
         {
-            std::cerr << "File '" << absoluteInputPath << "'" << " not found.\n";
-            continue;
+            auto const configurationDirectory = configurationFilePath.parent_path();
+            auto const absoluteInputPath{configurationDirectory / fileName};
+
+            if (!std::filesystem::exists(absoluteInputPath))
+            {
+                throw std::runtime_error(fmt::format("{}:{}: resource file not found '{}'\n -> file was expected to be here: {}", configurationFilePath.generic_string(), linePosition, fileName, absoluteInputPath.generic_string()));
+            }
+
+            if (std::filesystem::is_regular_file(absoluteInputPath))
+            {
+                auto relativeInputPath = std::filesystem::relative(absoluteInputPath, configurationDirectory);
+                inputs.emplace_back(Input{.filePath = absoluteInputPath, .variable_name = generateKey(relativeInputPath), .key = relativeInputPath.generic_string(), .size = std::filesystem::file_size(absoluteInputPath),});
+            }
+            else
+            {
+                // TODO support directories
+                throw std::runtime_error(fmt::format("{}:{}: '{}' is not a file", configurationFilePath.generic_string(), linePosition, absoluteInputPath.generic_string()));
+            }
         }
 
-        if (std::filesystem::is_regular_file(absoluteInputPath))
-        {
-            auto relativeInputPath = std::filesystem::relative(absoluteInputPath, configurationDirectory);
-
-            inputs.emplace_back(Input {
-                .filePath = absoluteInputPath,
-                .variable_name = generateKey(relativeInputPath),
-                .key = relativeInputPath.generic_string(),
-                .size = std::filesystem::file_size(absoluteInputPath),
-            });
-        }
-        else
-        {
-            std::cerr << "'" << lineBuffer << "'" << " is not a file.\n";
-            continue;
-        }
+        ++linePosition;
     }
 
     // We need to ensure the resources are ordered by the key otherwise
