@@ -8,6 +8,8 @@
 
 #include <fmt/core.h>
 
+static constexpr char const* const OneLineCommentStart = "#";
+
 namespace
 {
     std::string generateKey(std::filesystem::path const& inputFilePath)
@@ -20,6 +22,11 @@ namespace
         replaceAll(path, '.', '_');
         return path;
     }
+}
+
+inline std::string_view cleanLine(std::string_view view, char const* oneLineCommentStart)
+{
+    return trim(removeComment(view, oneLineCommentStart));
 }
 
 Configuration Configuration::fromFile(std::filesystem::path const& configurationFilePath)
@@ -37,7 +44,11 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
 
     while (std::getline(configurationFile, lineBuffer))
     {
-        auto fileName = trim(lineBuffer);
+        auto const fileName = cleanLine(lineBuffer, OneLineCommentStart);
+
+        if (fileName.starts_with(OneLineCommentStart))
+            continue;
+
         auto const configurationDirectory = configurationFilePath.parent_path();
         auto const absoluteInputPath{configurationDirectory / fileName};
 
