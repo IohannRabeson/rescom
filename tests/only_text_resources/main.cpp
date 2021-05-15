@@ -7,6 +7,6 @@
 TEST_CASE("ProjectTests", "[simple]") {
     auto const& slot = rescom::getResource("test.txt");
 
-    REQUIRE( std::string(slot.buffer, slot.size) == "Hello world!" );
+    REQUIRE( std::string(slot.bytes, slot.size) == "Hello world!" );
 }
 

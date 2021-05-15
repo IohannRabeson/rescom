@@ -4,9 +4,9 @@
 #include "rescom.hpp"
 
 TEST_CASE("ProjectTests", "[simple]") {
-    auto const& slot = rescom::getResource("test.txt");
+    rescom::Resource const& slot = rescom::getResource("test.txt");
 
-    REQUIRE( slot.buffer != nullptr );
+    REQUIRE( slot.bytes != nullptr );
     REQUIRE( slot.size != 0 );
 }
 

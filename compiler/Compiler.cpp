@@ -68,12 +68,12 @@ void Compiler::writeFileHeader(std::ostream& output)
 
     output << "namespace " << NamespaceForResourceData << "\n{\n";
 
-    output << tab() << "struct ResourceSlot\n"
+    output << tab() << "struct Resource\n"
            << tab() << "{\n"
            << tab(2) << "char const* const key;\n"
-           << tab(2) << "char const* const buffer;\n"
+           << tab(2) << "char const* const bytes;\n"
            << tab(2) << "unsigned int const size;\n"
-           << tab(2) << "constexpr ResourceSlot(char const* key, unsigned int size, char const* buffer) : key(key), buffer(buffer), size(size) {}\n"
+           << tab(2) << "constexpr Resource(char const* key, unsigned int size, char const* bytes) : key(key), bytes(bytes), size(size) {}\n"
            << tab() << "};\n";
 }
 
@@ -85,13 +85,13 @@ void Compiler::writeFileFooter(std::ostream& output)
     output << "#endif // RESCOM_GENERATED_FILE_" << resourceFileStem << "\n";
 }
 
-void Compiler::writeResource(Input const& input, std::vector<char> const& buffer, std::ostream& output)
+void Compiler::writeResource(Input const& input, std::vector<char> const& bytes, std::ostream& output)
 {
     output << tab(2) << "{\"" << input.key << "\", " << input.size << ", " << "\"";
 
     output << std::hex;
 
-    for (auto const c : buffer) {
+    for (auto const c : bytes) {
         output << "\\x" << static_cast<int>(static_cast<unsigned char>(c));
     }
 
@@ -106,7 +106,7 @@ void Compiler::writeAccessFunction(std::ostream& output)
 {
     output << "\n";
     output << "namespace details {\n";
-    output << tab() << "constexpr bool compareSlot(ResourceSlot const& slot, char const * key) { return std::string_view(slot.key) < key; }\n";
+    output << tab() << "constexpr bool compareSlot(Resource const& slot, char const * key) { return std::string_view(slot.key) < key; }\n";
     // Function lowerBound is an ugly copy-paste of https://en.cppreference.com/w/cpp/algorithm/lower_bound.
     // But I don't care, it's constexpr and it just works.
     output << "    template<class ForwardIt, class T, class Compare>\n"
@@ -132,19 +132,19 @@ void Compiler::writeAccessFunction(std::ostream& output)
               "\n";
 
     if (_configuration.inputs.empty())
-        output << "static constexpr ResourceSlot const NullResourceSlot{nullptr, 0u, nullptr};\n";
+        output << "static constexpr Resource const NullResourceSlot{nullptr, 0u, nullptr};\n";
 
     output << "} // namespace details\n";
 
     if (_configuration.inputs.empty())
     {
-        output << tab() << "inline constexpr ResourceSlot const& getResource(char const* key)\n"
+        output << tab() << "inline constexpr Resource const& getResource(char const* key)\n"
                << tab() << "{\n"
                << tab(3) << "return details::NullResourceSlot;\n"
                << tab() << "}\n";    }
     else
     {
-        output << tab() << "inline constexpr ResourceSlot const& getResource(char const* key)\n"
+        output << tab() << "inline constexpr Resource const& getResource(char const* key)\n"
                << tab() << "{\n"
                << tab(2) << "auto it = details::lowerBound(std::begin(details::Slots), std::end(details::Slots), key, details::compareSlot);\n"
                << "\n"
@@ -167,7 +167,7 @@ CompilationResult Compiler::writeResources(std::ostream& output)
 
     output << "namespace details {\n";
     output << tab() << "constexpr unsigned int const ResourcesCount = " << _configuration.inputs.size() << ";\n";
-    output << tab() << "constexpr ResourceSlot const Slots[ResourcesCount] = \n";
+    output << tab() << "constexpr Resource const Slots[ResourcesCount] = \n";
     output << tab() << "{\n";
     for (auto const& input : _configuration.inputs)
     {

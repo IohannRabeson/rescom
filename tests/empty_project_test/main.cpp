@@ -7,7 +7,7 @@
 TEST_CASE("EmptyProjectTests", "[simple]") {
     auto const& slot = rescom::getResource("test.txt");
 
-    REQUIRE( slot.buffer == nullptr );
+    REQUIRE( slot.bytes == nullptr );
     REQUIRE( slot.size == 0 );
     REQUIRE( slot.key == nullptr );
 }
