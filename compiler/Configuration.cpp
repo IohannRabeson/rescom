@@ -64,7 +64,7 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
             else
             {
                 // TODO support directories
-                throw std::runtime_error(fmt::format("{}:{}: '{}' is not a file\n -> file was expected to be here: {}", configurationFilePath.generic_string(), linePosition, fileName, absoluteInputPath.generic_string()));
+                throw std::runtime_error(fmt::format("{}:{}: '{}' is not a file", configurationFilePath.generic_string(), linePosition, absoluteInputPath.generic_string()));
             }
         }
 
