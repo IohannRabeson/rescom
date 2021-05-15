@@ -46,33 +46,26 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
     {
         auto const fileName = cleanLine(lineBuffer, OneLineCommentStart);
 
-        if (fileName.starts_with(OneLineCommentStart))
-            continue;
-
-        auto const configurationDirectory = configurationFilePath.parent_path();
-        auto const absoluteInputPath{configurationDirectory / fileName};
-
-        if (!std::filesystem::exists(absoluteInputPath))
+        if (!fileName.empty())
         {
-            throw std::runtime_error(fmt::format("{}:{}: resource file not found '{}'\n -> file was expected to be here: {}", configurationFilePath.generic_string(), linePosition, fileName, absoluteInputPath.generic_string()));
-        }
+            auto const configurationDirectory = configurationFilePath.parent_path();
+            auto const absoluteInputPath{configurationDirectory / fileName};
 
-        if (std::filesystem::is_regular_file(absoluteInputPath))
-        {
-            auto relativeInputPath = std::filesystem::relative(absoluteInputPath, configurationDirectory);
+            if (!std::filesystem::exists(absoluteInputPath))
+            {
+                throw std::runtime_error(fmt::format("{}:{}: resource file not found '{}'\n -> file was expected to be here: {}", configurationFilePath.generic_string(), linePosition, fileName, absoluteInputPath.generic_string()));
+            }
 
-            inputs.emplace_back(Input {
-                .filePath = absoluteInputPath,
-                .variable_name = generateKey(relativeInputPath),
-                .key = relativeInputPath.generic_string(),
-                .size = std::filesystem::file_size(absoluteInputPath),
-            });
-        }
-        else
-        {
-            // TODO support directories
-            std::cerr << "'" << lineBuffer << "'" << " is not a file.\n";
-            continue;
+            if (std::filesystem::is_regular_file(absoluteInputPath))
+            {
+                auto relativeInputPath = std::filesystem::relative(absoluteInputPath, configurationDirectory);
+                inputs.emplace_back(Input{.filePath = absoluteInputPath, .variable_name = generateKey(relativeInputPath), .key = relativeInputPath.generic_string(), .size = std::filesystem::file_size(absoluteInputPath),});
+            }
+            else
+            {
+                // TODO support directories
+                throw std::runtime_error(fmt::format("{}:{}: '{}' is not a file\n -> file was expected to be here: {}", configurationFilePath.generic_string(), linePosition, fileName, absoluteInputPath.generic_string()));
+            }
         }
 
         ++linePosition;
