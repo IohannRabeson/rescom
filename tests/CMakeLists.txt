@@ -1,2 +1,3 @@
-add_subdirectory(project_test)
+add_subdirectory(only_text_resources)
 add_subdirectory(empty_project_test)
+add_subdirectory(binary_resources)

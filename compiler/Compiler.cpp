@@ -92,7 +92,7 @@ void Compiler::writeResource(Input const& input, std::vector<char> const& buffer
     output << std::hex;
 
     for (auto const c : buffer) {
-        output << "\\x" << (int)c;
+        output << "\\x" << static_cast<int>(static_cast<unsigned char>(c));
     }
 
     output << std::dec;
