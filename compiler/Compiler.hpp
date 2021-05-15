@@ -1,6 +1,8 @@
 #ifndef RESCOM_COMPILER_HPP
 #define RESCOM_COMPILER_HPP
 #include <ostream>
+#include <vector>
+#include <string>
 
 class Configuration;
 class Input;
