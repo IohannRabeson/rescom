@@ -65,5 +65,5 @@ std::optional<Configuration> Configuration::fromFile(std::filesystem::path const
         return left.key < right.key;
     });
 
-    return Configuration { .inputs = std::move(inputs), .configurationFilePath = configurationFilePath };
+    return Configuration { .configurationFilePath = configurationFilePath, .inputs = std::move(inputs) };
 }
