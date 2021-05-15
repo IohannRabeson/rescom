@@ -158,6 +158,9 @@ void Compiler::writeAccessFunction(std::ostream& output)
 
 CompilationResult Compiler::writeResources(std::ostream& output)
 {
+    if (_configuration.inputs.empty())
+        return CompilationResult::Ok;
+
     std::vector<char> buffer;
 
     buffer.reserve(1024 * 16);

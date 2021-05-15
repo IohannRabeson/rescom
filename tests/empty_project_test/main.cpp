@@ -1,12 +1,14 @@
+#define CATCH_CONFIG_MAIN
+
+#include <catch2/catch_all.hpp>
+
 #include "rescom.hpp"
 
-#include <gtest/gtest.h>
-
-TEST(EmptyProjectTests, simple) {
+TEST_CASE("EmptyProjectTests", "[simple]") {
     auto const& slot = rescom::getResource("test.txt");
 
-    EXPECT_EQ( slot.buffer, nullptr );
-    EXPECT_EQ( slot.size, 0 );
-    EXPECT_EQ( slot.key, nullptr );
+    REQUIRE( slot.buffer == nullptr );
+    REQUIRE( slot.size == 0 );
+    REQUIRE( slot.key == nullptr );
 }
 
