@@ -8,7 +8,7 @@ C++ resource compiler using CMake
  - Easy to use and integrate with CMake
 
 ## Requirements
- - C++ compiler with minimal C++17 support
+ - C++ compiler with C++17 support
  - CMake 3.9 or later
 
 ## How to clone
