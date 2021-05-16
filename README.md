@@ -28,7 +28,7 @@ git submodule update --init --recursive
 
 ## Tutorial
 
- 1 - Add this repository as submodule and use `add_subdirectory`:
+ 1 - Add this repository as submodule and use `add_subdirectory` in your CMakeLists.txt:
  ```cmake
     add_subdirectory(rescom)
 ```
