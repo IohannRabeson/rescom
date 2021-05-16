@@ -1,5 +1,5 @@
 #include "Configuration.hpp"
-#include "Strings.hpp"
+#include "StringHelpers.hpp"
 
 #include <fstream>
 #include <iostream>

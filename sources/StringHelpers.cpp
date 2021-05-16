@@ -1,10 +1,7 @@
-#ifndef RESCOM_STRINGS_HPP
-#define RESCOM_STRINGS_HPP
-#include <string>
-#include <string_view>
+#include "StringHelpers.hpp"
 #include <algorithm>
 
-inline void replaceAll(std::string& str, char toReplace, char replacement)
+void replaceAll(std::string& str, char toReplace, char replacement)
 {
     for (auto pos = str.find(toReplace); pos != std::string::npos; pos = str.find(toReplace, pos + 1))
     {
@@ -12,19 +9,19 @@ inline void replaceAll(std::string& str, char toReplace, char replacement)
     }
 }
 
-inline void toUpper(std::string& str)
+void toUpper(std::string& str)
 {
     std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return std::toupper(c); });
 }
 
-inline std::string toUpper(std::string str)
+std::string toUpper(std::string str)
 {
     std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return std::toupper(c); });
 
     return str;
 }
 
-inline std::string_view trim(std::string_view view)
+std::string_view trim(std::string_view view)
 {
     static constexpr char const* const Spaces = " \t\v\f\r\n";
     view.remove_prefix(std::min(view.find_first_not_of(Spaces), view.size()));
@@ -33,7 +30,7 @@ inline std::string_view trim(std::string_view view)
     return view;
 }
 
-inline std::string_view removeComment(std::string_view view, char const* oneLineCommentStart)
+std::string_view removeComment(std::string_view view, char const* oneLineCommentStart)
 {
     auto commentStartPosition = view.find(oneLineCommentStart);
 
@@ -43,4 +40,3 @@ inline std::string_view removeComment(std::string_view view, char const* oneLine
     return view;
 }
 
-#endif //RESCOM_STRINGS_HPP
