@@ -1,6 +1,6 @@
 #include "CodeGenerator.hpp"
 #include "Configuration.hpp"
-#include "Strings.hpp"
+#include "StringHelpers.hpp"
 
 #include <filesystem>
 #include <fstream>

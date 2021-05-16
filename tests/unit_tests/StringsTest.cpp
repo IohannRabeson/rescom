@@ -1,4 +1,4 @@
-#include <Strings.hpp>
+#include <StringHelpers.hpp>
 #include <catch2/catch_all.hpp>
 
 TEST_CASE("trim", "StringTests") {
