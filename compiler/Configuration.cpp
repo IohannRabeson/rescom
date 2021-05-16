@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cassert>
 #include <stdexcept>
+#include <stack>
 
 #include <fmt/core.h>
 
