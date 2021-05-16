@@ -26,10 +26,6 @@ git submodule add git@github.com:IohannRabeson/rescom.git
 git submodule update --init --recursive
 ```
 
-
-## How to build tests
-You must set the variable `RESCOM_TEST` to `ON`.
-
 ## Tutorial
 
  1 - Add this repository as submodule and use `add_subdirectory`:
@@ -74,3 +70,7 @@ unsigned int const size;
 ```
 
 You can see complete examples in the `tests` directory.
+
+## How to build tests
+You must set the CMake variable `RESCOM_TEST` to `ON`.
+
