@@ -3,7 +3,7 @@
 C++ resource compiler using CMake
 
  - Tested on Windows, Linux and OSX
- - Generated code should not produce warnings
+ - Generated code does not produce warnings
  - Resources can be used at compile time (rescom::getResource is constexpr)
  - Easy to use and integrate with CMake
 
