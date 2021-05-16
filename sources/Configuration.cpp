@@ -14,17 +14,6 @@ static constexpr char const* const OneLineCommentStart = "#";
 
 namespace
 {
-    inline std::string generateKey(std::filesystem::path const& inputFilePath)
-    {
-        assert(inputFilePath.is_relative());
-
-        auto path = inputFilePath.generic_string();
-
-        replaceAll(path, std::filesystem::path::preferred_separator, '_');
-        replaceAll(path, '.', '_');
-        return path;
-    }
-
     inline std::string_view cleanLine(std::string_view view, char const* oneLineCommentStart)
     {
         return trim(removeComment(view, oneLineCommentStart));
@@ -37,7 +26,6 @@ Input createInput(std::filesystem::path const& configurationDirectory, std::file
 
     return Input{
         absoluteInputPath,
-        generateKey(relativeInputPath),
         relativeInputPath.generic_string(),
         std::filesystem::file_size(absoluteInputPath)
     };

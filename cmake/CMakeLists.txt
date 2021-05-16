@@ -16,3 +16,12 @@ function(rescom_compile TARGET_NAME RESCOM_FILE)
     target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
     set_target_properties(${TARGET_NAME} PROPERTIES CXX_STANDARD 17)
 endfunction()
+
+function(warning_as_error TARGET_NAME)
+    target_compile_options(${TARGET_NAME} PRIVATE
+            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
+            -Werror -Wall -Wextra>
+            $<$<CXX_COMPILER_ID:MSVC>:
+            /WX /W4>
+            )
+endfunction()
