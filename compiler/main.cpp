@@ -7,7 +7,7 @@
 #include <cxxopts.hpp>
 
 #include "Configuration.hpp"
-#include "Compiler.hpp"
+#include "CodeGenerator.hpp"
 
 std::ostream& selectOutputStream(std::ofstream& file, std::ostream& fallback)
 {
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     try
     {
         auto configuration = Configuration::fromFile(inputFilePath, recursive);
-        Compiler c(configuration);
+        CodeGenerator c(configuration);
         c.compile(selectOutputStream(outputFile, std::cout));
     }
     catch (std::exception const& error)

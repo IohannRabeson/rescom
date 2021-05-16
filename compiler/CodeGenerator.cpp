@@ -1,4 +1,4 @@
-#include "Compiler.hpp"
+#include "CodeGenerator.hpp"
 #include "Configuration.hpp"
 #include "Strings.hpp"
 
@@ -31,14 +31,14 @@ namespace
 
 static std::string const HeaderProtectionMacroPrefix = "RESCOM_GENERATED_FILE_";
 
-Compiler::Compiler(Configuration const& configuration)
+CodeGenerator::CodeGenerator(Configuration const& configuration)
 : _configuration(configuration)
 , _tabulation(configuration.tabulationSize, ' ')
 , _headerProtectionMacroName(HeaderProtectionMacroPrefix + toUpper(_configuration.configurationFilePath.stem().generic_string()))
 {
 }
 
-std::string Compiler::tab(unsigned int count) const
+std::string CodeGenerator::tab(unsigned int count) const
 {
     if (count == 0)
         return {};
@@ -53,7 +53,7 @@ std::string Compiler::tab(unsigned int count) const
     return result;
 }
 
-CompilationResult Compiler::compile(std::ostream& output)
+CompilationResult CodeGenerator::compile(std::ostream& output)
 {
     writeFileHeader(output);
     writeResources(output);
@@ -63,7 +63,7 @@ CompilationResult Compiler::compile(std::ostream& output)
     return CompilationResult::Ok;
 }
 
-void Compiler::writeFileHeader(std::ostream& output)
+void CodeGenerator::writeFileHeader(std::ostream& output)
 {
     static std::string const Includes[] = {"<stdexcept>", "<iterator>", "<string>"};
     auto resourceFileStem = toUpper(_configuration.configurationFilePath.stem().generic_string());
@@ -87,7 +87,7 @@ void Compiler::writeFileHeader(std::ostream& output)
            << tab(1) << "};\n\n";
 }
 
-void Compiler::writeFileFooter(std::ostream& output)
+void CodeGenerator::writeFileFooter(std::ostream& output)
 {
     auto resourceFileStem = toUpper(_configuration.configurationFilePath.stem().generic_string());
 
@@ -95,7 +95,7 @@ void Compiler::writeFileFooter(std::ostream& output)
     output << "#endif // " << _headerProtectionMacroName << "\n";
 }
 
-void Compiler::writeResource(Input const& input, std::vector<char> const& bytes, std::ostream& output)
+void CodeGenerator::writeResource(Input const& input, std::vector<char> const& bytes, std::ostream& output)
 {
     output << tab(3) << "{\"" << input.key << "\", " << input.size << ", " << "\"";
 
@@ -112,7 +112,7 @@ void Compiler::writeResource(Input const& input, std::vector<char> const& bytes,
 /// Write the code to access to a specific resource.
 /// The generated code uses the fact resources are ordered by their key to use a constexpr version of std::lower_bound and
 ///// keep the compilation time acceptable.
-void Compiler::writeAccessFunction(std::ostream& output)
+void CodeGenerator::writeAccessFunction(std::ostream& output)
 {
     output << tab(1) << "namespace details {\n";
     if (!_configuration.inputs.empty()) {
@@ -156,9 +156,16 @@ void Compiler::writeAccessFunction(std::ostream& output)
                << tab(2) << "return *it;\n"
                << tab() << "}\n";
     }
+
+    output << tab() << "inline constexpr std::string_view getText(char const* key)\n"
+           << tab() << "{\n"
+           << tab(2) << "auto resource = getResource(key);\n"
+           << "\n"
+           << tab(2) << "return std::string_view{resource.bytes, resource.size};\n"
+           << tab() << "}\n";
 }
 
-CompilationResult Compiler::writeResources(std::ostream& output)
+CompilationResult CodeGenerator::writeResources(std::ostream& output)
 {
     if (_configuration.inputs.empty())
         return CompilationResult::Ok;

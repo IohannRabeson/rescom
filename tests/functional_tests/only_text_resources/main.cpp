@@ -4,10 +4,14 @@
 
 #include "rescom.hpp"
 
-TEST_CASE("basic", "[TextOnly]") {
+TEST_CASE("getResource", "[TextOnly]") {
     auto const& slot = rescom::getResource("test.txt");
 
     REQUIRE( std::string(slot.bytes, slot.size) == "Hello world!" );
+}
+
+TEST_CASE("getText", "[TextOnly]") {
+    REQUIRE( rescom::getText("test.txt").compare("Hello world!") == 0 );
 }
 
 TEST_CASE("invalid key", "[TextOnly]") {
@@ -18,3 +22,6 @@ TEST_CASE("invalid key", "[TextOnly]") {
     REQUIRE( slot.key == nullptr );
 }
 
+TEST_CASE("invalid key getText", "[TextOnly]") {
+    REQUIRE( rescom::getText("test invalid.txt").empty() );
+}
