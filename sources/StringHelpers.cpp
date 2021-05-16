@@ -1,6 +1,7 @@
 #include "StringHelpers.hpp"
 #include <algorithm>
 
+
 void replaceAll(std::string& str, char toReplace, char replacement)
 {
     for (auto pos = str.find(toReplace); pos != std::string::npos; pos = str.find(toReplace, pos + 1))
@@ -9,14 +10,9 @@ void replaceAll(std::string& str, char toReplace, char replacement)
     }
 }
 
-void toUpper(std::string& str)
-{
-    std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return std::toupper(c); });
-}
-
 std::string toUpper(std::string str)
 {
-    std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return std::toupper(c); });
+    std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return static_cast<char>(std::toupper(c)); });
 
     return str;
 }
