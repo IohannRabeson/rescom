@@ -24,15 +24,11 @@ inline std::string toUpper(std::string str)
     return str;
 }
 
-inline bool isSpace(char c)
-{
-    return std::isspace(static_cast<unsigned char>(c));
-}
-
 inline std::string_view trim(std::string_view view)
 {
-    view.remove_prefix(std::min(view.find_first_not_of(" "), view.size()));
-    view.remove_suffix(view.size() - std::min(view.find_last_not_of(" ") + 1, view.size()));
+    static constexpr char const* const Spaces = " \t\v\f\r\n";
+    view.remove_prefix(std::min(view.find_first_not_of(Spaces), view.size()));
+    view.remove_suffix(view.size() - std::min(view.find_last_not_of(Spaces) + 1, view.size()));
 
     return view;
 }

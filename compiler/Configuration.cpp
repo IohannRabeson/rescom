@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cassert>
 #include <stdexcept>
+#include <stack>
 
 #include <fmt/core.h>
 
@@ -29,7 +30,69 @@ inline std::string_view cleanLine(std::string_view view, char const* oneLineComm
     return trim(removeComment(view, oneLineCommentStart));
 }
 
-Configuration Configuration::fromFile(std::filesystem::path const& configurationFilePath)
+
+Input createInput(std::filesystem::path const& configurationDirectory, std::filesystem::path const& absoluteInputPath)
+{
+    auto relativeInputPath = std::filesystem::relative(absoluteInputPath, configurationDirectory);
+
+    return Input{
+        absoluteInputPath,
+        generateKey(relativeInputPath),
+        relativeInputPath.generic_string(),
+        std::filesystem::file_size(absoluteInputPath)
+    };
+}
+
+void createInputs(std::filesystem::path const& configurationFilePath, size_t linePosition, std::string_view const& fileName, bool recursive, std::vector<Input>& results)
+{
+    auto const configurationDirectory = configurationFilePath.parent_path();
+    auto const absoluteInputPath{configurationDirectory / fileName};
+
+    if (!std::filesystem::exists(absoluteInputPath))
+    {
+        throw std::runtime_error(fmt::format("{}:{}: resource file not found '{}'\n -> file was expected to be here: {}", configurationFilePath.generic_string(), linePosition, fileName, absoluteInputPath.generic_string()));
+    }
+
+    if (std::filesystem::is_regular_file(absoluteInputPath))
+    {
+        results.emplace_back(createInput(configurationDirectory, absoluteInputPath));
+    }
+    else if (std::filesystem::is_directory(absoluteInputPath))
+    {
+        std::stack<std::filesystem::path> directories;
+
+        directories.push(absoluteInputPath);
+        while (!directories.empty())
+        {
+            auto const currentDirectory = directories.top();
+
+            directories.pop();
+
+            std::filesystem::directory_iterator dirIt{currentDirectory};
+            std::filesystem::directory_iterator endDirIt;
+
+            while (dirIt != endDirIt)
+            {
+                if (std::filesystem::is_regular_file(*dirIt))
+                {
+                    results.emplace_back(createInput(configurationDirectory, *dirIt));
+                }
+                else if (recursive && std::filesystem::is_directory(*dirIt))
+                {
+                    directories.push(*dirIt);
+                }
+                // Everything excepted files and directories are just ignored
+                ++dirIt;
+            }
+        }
+    }
+    else
+    {
+        throw std::runtime_error(fmt::format("{}:{}: '{}' is not a file neither a directory", configurationFilePath.generic_string(), linePosition, absoluteInputPath.generic_string()));
+    }
+}
+
+Configuration Configuration::fromFile(std::filesystem::path const& configurationFilePath, bool recurse)
 {
     std::ifstream configurationFile(configurationFilePath, std::ifstream::in);
     std::string lineBuffer;
@@ -48,24 +111,7 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
 
         if (!fileName.empty())
         {
-            auto const configurationDirectory = configurationFilePath.parent_path();
-            auto const absoluteInputPath{configurationDirectory / fileName};
-
-            if (!std::filesystem::exists(absoluteInputPath))
-            {
-                throw std::runtime_error(fmt::format("{}:{}: resource file not found '{}'\n -> file was expected to be here: {}", configurationFilePath.generic_string(), linePosition, fileName, absoluteInputPath.generic_string()));
-            }
-
-            if (std::filesystem::is_regular_file(absoluteInputPath))
-            {
-                auto relativeInputPath = std::filesystem::relative(absoluteInputPath, configurationDirectory);
-                inputs.emplace_back(Input{absoluteInputPath, generateKey(relativeInputPath), relativeInputPath.generic_string(), std::filesystem::file_size(absoluteInputPath),});
-            }
-            else
-            {
-                // TODO support directories
-                throw std::runtime_error(fmt::format("{}:{}: '{}' is not a file", configurationFilePath.generic_string(), linePosition, absoluteInputPath.generic_string()));
-            }
+            createInputs(configurationFilePath, linePosition, fileName, recurse, inputs);
         }
 
         ++linePosition;

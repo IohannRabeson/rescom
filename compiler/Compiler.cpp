@@ -119,8 +119,8 @@ void Compiler::writeAccessFunction(std::ostream& output)
         output << tab(2) << "constexpr bool compareSlot(Resource const& slot, char const * key) { return std::string_view(slot.key) < key; }\n\n";
         // Function lowerBound is an ugly copy-paste of https://en.cppreference.com/w/cpp/algorithm/lower_bound.
         // But I don't care, it's constexpr and it just works.
-        output << tab(2) << "template<class ForwardIt, class T, class Compare>\n"
-               << tab(2) << "constexpr ForwardIt lowerBound(ForwardIt first, ForwardIt last, T const& value, Compare compare)\n"
+        output << tab(2) << "template<class ForwardIt, class Compare>\n"
+               << tab(2) << "constexpr ForwardIt lowerBound(ForwardIt first, ForwardIt last, char const* value, Compare compare)\n"
                << tab(2) << "{\n"
                << tab(3) << "typename std::iterator_traits<ForwardIt>::difference_type count;\n"
                << tab(3) << "typename std::iterator_traits<ForwardIt>::difference_type step;\n"
@@ -130,12 +130,11 @@ void Compiler::writeAccessFunction(std::ostream& output)
                << tab(4) << "it = first; step = count / 2; std::advance(it, step);\n"
                << tab(4) << "if (compare(*it, value)) { first = ++it; count -= step + 1; } else { count = step; }\n"
                << tab(3) << "}\n"
-               << tab(3) << "return first;\n"
+               << tab(3) << "return std::strcmp(value, first->key) == 0 ? first : last;\n"
                << tab(2) << "}\n";
     }
 
-    if (_configuration.inputs.empty())
-        output << tab(2) << "static constexpr Resource const NullResource{nullptr, 0u, nullptr};\n";
+    output << tab(2) << "static constexpr Resource const NullResource{nullptr, 0u, nullptr};\n";
 
     output << tab(1) << "} // namespace details\n\n";
 
@@ -152,7 +151,7 @@ void Compiler::writeAccessFunction(std::ostream& output)
                << tab(2) << "auto it = details::lowerBound(std::begin(details::Slots), std::end(details::Slots), key, details::compareSlot);\n"
                << "\n"
                << tab(2) << "if (it == std::end(details::Slots))\n"
-               << tab(3) << "throw std::range_error(\"invalid resource key\");\n"
+               << tab(3) << "return details::NullResource;\n"
                << "\n"
                << tab(2) << "return *it;\n"
                << tab() << "}\n";

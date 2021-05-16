@@ -22,17 +22,20 @@ int main(int argc, char** argv)
     options.add_options()
         ("i,input", "Input file", cxxopts::value<std::string>())
         ("o,output", "Output file", cxxopts::value<std::string>())
+        ("r,recursive", "Visit directories recursively", cxxopts::value<bool>())
         ;
 
     auto parseResult = options.parse(argc, argv);
 
     std::filesystem::path const outputFilePath{parseResult.count("output") > 0 ? parseResult["output"].as<std::string>() : ""};
     std::filesystem::path const inputFilePath{parseResult["input"].as<std::string>()};
+    bool const recursive = parseResult.count("recursive") > 0;
+
     std::ofstream outputFile{outputFilePath, std::ios::out};
 
     try
     {
-        auto configuration = Configuration::fromFile(inputFilePath);
+        auto configuration = Configuration::fromFile(inputFilePath, recursive);
         Compiler c(configuration);
         c.compile(selectOutputStream(outputFile, std::cout));
     }
