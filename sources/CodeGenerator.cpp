@@ -157,12 +157,39 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
                << tab() << "}\n";
     }
 
-    output << tab() << "inline constexpr std::string_view getText(char const* key)\n"
+    output << "\n"
+           << tab() << "inline constexpr std::string_view getText(char const* key)\n"
            << tab() << "{\n"
            << tab(2) << "auto resource = getResource(key);\n"
            << "\n"
            << tab(2) << "return std::string_view{resource.bytes, resource.size};\n"
            << tab() << "}\n";
+
+    output << "\n"
+           << tab() << "inline constexpr Resource const* begin()\n"
+           << tab() << "{\n";
+    if (_configuration.inputs.empty())
+    {
+        output << tab(2) << "return &details::NullResource;\n";
+    }
+    else
+    {
+        output << tab(2) << "return std::begin(details::Slots);\n";
+    }
+    output << tab() << "}\n";
+
+    output << "\n"
+           << tab() << "inline constexpr Resource const* end()\n"
+           << tab() << "{\n";
+    if (_configuration.inputs.empty())
+    {
+        output << tab(2) << "return &details::NullResource;\n";
+    }
+    else
+    {
+        output << tab(2) << "return std::end(details::Slots);\n";
+    }
+    output << tab() << "}\n";
 }
 
 CompilationResult CodeGenerator::writeResources(std::ostream& output)

@@ -8,7 +8,7 @@ endif()
 
 add_subdirectory(cmake)
 add_subdirectory(externals)
-add_subdirectory(compiler)
+add_subdirectory(sources)
 if (RESCOM_TEST)
     add_subdirectory(tests)
 endif()

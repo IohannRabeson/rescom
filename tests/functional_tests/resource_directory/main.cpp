@@ -10,6 +10,12 @@ std::string getString(std::string const& key)
     return std::string(slot.bytes, slot.size);
 }
 
+TEST_CASE("global", "global test")
+{
+    REQUIRE( std::distance(rescom::begin(), rescom::end()) == 5 );
+    REQUIRE( std::is_sorted(rescom::begin(), rescom::end(), [](auto const& left, auto const right) { return std::strcmp(left.key, right.key) < 0; }) );
+}
+
 TEST_CASE("all", "ResourceDirectory") {
     REQUIRE( getString("test.txt") == "Hello world! root" );
     REQUIRE( getString("sub/test.txt") == "Hello sub world!" );
