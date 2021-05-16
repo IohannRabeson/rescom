@@ -1,5 +1,5 @@
-#ifndef RESCOM_COMPILER_HPP
-#define RESCOM_COMPILER_HPP
+#ifndef RESCOM_CODEGENERATOR_HPP
+#define RESCOM_CODEGENERATOR_HPP
 #include <ostream>
 #include <vector>
 #include <string>
@@ -13,10 +13,10 @@ enum CompilationResult
     Error,
 };
 
-class Compiler
+class CodeGenerator
 {
 public:
-    explicit Compiler(Configuration const& configuration);
+    explicit CodeGenerator(Configuration const& configuration);
 
     CompilationResult compile(std::ostream& output);
 private:
@@ -33,4 +33,4 @@ private:
     std::string const _headerProtectionMacroName;
 };
 
-#endif //RESCOM_COMPILER_HPP
+#endif //RESCOM_CODEGENERATOR_HPP
