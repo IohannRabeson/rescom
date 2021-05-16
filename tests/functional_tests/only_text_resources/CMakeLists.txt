@@ -1,5 +1,5 @@
 add_executable(only_text_resources_tests main.cpp)
 add_test(NAME only_text_resources_tests COMMAND only_text_resources_tests)
 target_link_libraries(only_text_resources_tests PRIVATE Catch2::Catch2WithMain)
-set_target_properties(only_text_resources_tests PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON CXX_STANDARD_REQUIRED ON)
+common_tests(only_text_resources_tests)
 rescom_compile(only_text_resources_tests ${CMAKE_CURRENT_SOURCE_DIR}/resources/files.rescom)

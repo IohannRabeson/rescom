@@ -9,7 +9,7 @@ TEST_CASE("trim", "StringTests") {
     REQUIRE( std::string(trim(" a b ")) == "a b" );
 }
 
-TEST_CASE("clean_comment", "StringTests")
+TEST_CASE("removeComment", "StringTests")
 {
     REQUIRE( std::string(removeComment("", "#")) == "" );
     REQUIRE( std::string(removeComment("#", "#")) == "" );
