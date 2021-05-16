@@ -6,6 +6,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <stack>
+#include <algorithm>
 
 #include <fmt/core.h>
 
