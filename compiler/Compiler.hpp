@@ -30,6 +30,7 @@ private:
 private:
     Configuration const& _configuration;
     std::string const _tabulation;
+    std::string const _headerProtectionMacroName;
 };
 
 #endif //RESCOM_COMPILER_HPP
