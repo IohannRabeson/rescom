@@ -36,7 +36,7 @@ git submodule update --init --recursive
 The file `rescom.list` contains the files to embed, on file per line and paths must be relative to
 the directory of the list file:  
  ```shell
-mkdir resources && cat "content.txt" > resources/rescom.list && cat "Hello world!" > content.txt
+mkdir resources && echo "content.txt" > resources/rescom.list && cat "Hello world!" > content.txt
 ```
  3 - In the CMakeLists.txt of your project, enable rescom:
  ```cmake
