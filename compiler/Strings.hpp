@@ -24,11 +24,6 @@ inline std::string toUpper(std::string str)
     return str;
 }
 
-inline bool isSpace(char c)
-{
-    return std::isspace(static_cast<unsigned char>(c));
-}
-
 inline std::string_view trim(std::string_view view)
 {
     view.remove_prefix(std::min(view.find_first_not_of(" "), view.size()));

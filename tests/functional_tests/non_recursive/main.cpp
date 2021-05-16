@@ -10,11 +10,13 @@ std::string getString(std::string const& key)
     return std::string(slot.bytes, slot.size);
 }
 
-TEST_CASE("all", "ResourceDirectory") {
+TEST_CASE("all", "NonRecursive") {
     REQUIRE( getString("test.txt") == "Hello world! root" );
     REQUIRE( getString("sub/test.txt") == "Hello sub world!" );
     REQUIRE( getString("sub sub/test.txt") == "Hello sub sub world!" );
+    // This one is discovered because dir1 is listed
     REQUIRE( getString("dir1/test.txt") == "oh yeah" );
-    REQUIRE( getString("dir1/recursive/test.txt") == "wowowow" );
+    // This one must be not found
+    REQUIRE( rescom::getResource("dir1/recursive/test.txt").bytes == nullptr );
 }
 

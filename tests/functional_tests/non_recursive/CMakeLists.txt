@@ -1,0 +1,5 @@
+add_executable(non_recursive_tests main.cpp ../../unit_tests/main.cpp)
+add_test(NAME non_recursive_tests COMMAND non_recursive_tests)
+target_link_libraries(non_recursive_tests PRIVATE Catch2::Catch2WithMain)
+common_tests(non_recursive_tests)
+rescom_compile(non_recursive_tests ${CMAKE_CURRENT_SOURCE_DIR}/resources/files.rescom)
