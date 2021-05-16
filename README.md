@@ -8,7 +8,7 @@ C++ resource compiler using CMake to embed files into the executable
  - Easy to use and integrate with CMake
 
 ## Requirements
- - C++ compiler with C++17 support
+ - C++ compiler with C++17 support - Rescom is tested with Visual Studio 16 2019, AppleClang 12 and GNU 9.3.0
  - CMake 3.9 or later
 
 ## How to clone
