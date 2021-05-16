@@ -1,6 +1,6 @@
 # rescom [![CMake](https://github.com/IohannRabeson/rescom/actions/workflows/cmake.yml/badge.svg)](https://github.com/IohannRabeson/rescom/actions/workflows/cmake.yml)
 
-C++ resource compiler using CMake
+C++ resource compiler using CMake to embed files into the executable
 
  - Tested on Windows, Linux and OSX
  - Generated code does not produce warnings
