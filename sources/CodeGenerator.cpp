@@ -157,6 +157,11 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
                << tab() << "}\n";
     }
 
+    output << tab() << "inline constexpr bool contains(char const* key)\n"
+           << tab() << "{\n"
+           << tab(2) << "return &getResource(key) != &details::NullResource;\n"
+           << tab() << "}\n";
+
     output << "\n"
            << tab() << "inline constexpr std::string_view getText(char const* key)\n"
            << tab() << "{\n"

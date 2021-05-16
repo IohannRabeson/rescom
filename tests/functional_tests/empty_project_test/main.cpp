@@ -4,7 +4,7 @@
 
 #include "rescom.hpp"
 
-TEST_CASE("EmptyProjectTests", "[simple]") {
+TEST_CASE("getResource", "[EmptyProjectTests]") {
     auto const& slot = rescom::getResource("test.txt");
 
     REQUIRE( slot.bytes == nullptr );
@@ -12,3 +12,14 @@ TEST_CASE("EmptyProjectTests", "[simple]") {
     REQUIRE( slot.key == nullptr );
 }
 
+TEST_CASE("getText", "[EmptyProjectTests]") {
+    REQUIRE( rescom::getText("test.txt").empty() );
+}
+
+TEST_CASE("contains", "[TextOnly]") {
+    REQUIRE( rescom::contains("") == false );
+}
+
+TEST_CASE("iterators", "[EmptyProjectTests]") {
+    REQUIRE( std::distance(rescom::begin(), rescom::end()) == 0 );
+}
