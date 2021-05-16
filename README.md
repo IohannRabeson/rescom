@@ -32,7 +32,9 @@ git submodule update --init --recursive
  ```cmake
     add_subdirectory(rescom)
 ```
- 2 - Create a folder for the resources in your project, add it few files and list them in a text file:
+ 2 - Create a folder for the resources in your project, add it few files and list them in a text file.  
+The file `rescom.list` contains the files to embed, on file per line, the path must be relative to
+the directory of the list file:  
  ```shell
 mkdir resources && cat "content.txt" > resources/rescom.list && cat "Hello world!" > content.txt
 ```
