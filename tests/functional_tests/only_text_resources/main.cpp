@@ -25,3 +25,11 @@ TEST_CASE("invalid key", "[TextOnly]") {
 TEST_CASE("invalid key getText", "[TextOnly]") {
     REQUIRE( rescom::getText("test invalid.txt").empty() );
 }
+
+TEST_CASE("contains", "[TextOnly]") {
+    REQUIRE( rescom::contains("test.txt") == true );
+}
+
+TEST_CASE("invalid key contains", "[TextOnly]") {
+    REQUIRE( rescom::contains("test invalid.txt") == false );
+}
