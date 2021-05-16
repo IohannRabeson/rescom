@@ -10,6 +10,7 @@ TEST_CASE("getResource", "[EmptyProjectTests]") {
     REQUIRE( slot.bytes == nullptr );
     REQUIRE( slot.size == 0 );
     REQUIRE( slot.key == nullptr );
+    REQUIRE( std::distance(rescom::begin(), rescom::end()) == 0 );
 }
 
 TEST_CASE("getText", "[EmptyProjectTests]") {

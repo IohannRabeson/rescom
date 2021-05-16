@@ -8,7 +8,6 @@
 struct Input
 {
     std::filesystem::path filePath;
-    std::string variable_name;
     std::string key;
     std::uint64_t size;
 };

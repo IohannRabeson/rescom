@@ -17,3 +17,10 @@ TEST_CASE("removeComment", "StringTests")
     REQUIRE( std::string(removeComment("a #b", "#")) == "a " );
     REQUIRE( std::string(removeComment("#a b ", "#")) == "" );
 }
+
+TEST_CASE("upperCase", "StringTests")
+{
+    REQUIRE( toUpper("azAZ") == "AZAZ" );
+    REQUIRE( toUpper("") == "" );
+    REQUIRE( toUpper(" ") == " " );
+}
