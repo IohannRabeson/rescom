@@ -5,7 +5,7 @@ macro (common_tests TARGET_NAME)
             $<$<CXX_COMPILER_ID:MSVC>:
             /WX /W4>
             )
-    set_target_properties(${TARGET_NAME} PROPERTIES CXX_STANDARD 20 CXX_EXTENSIONS ON CXX_STANDARD_REQUIRED ON)
+    set_target_properties(${TARGET_NAME} PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS ON CXX_STANDARD_REQUIRED ON)
 endmacro()
 
 add_subdirectory(only_text_resources)
