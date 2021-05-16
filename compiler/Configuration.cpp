@@ -59,7 +59,7 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
             if (std::filesystem::is_regular_file(absoluteInputPath))
             {
                 auto relativeInputPath = std::filesystem::relative(absoluteInputPath, configurationDirectory);
-                inputs.emplace_back(Input{.filePath = absoluteInputPath, .variable_name = generateKey(relativeInputPath), .key = relativeInputPath.generic_string(), .size = std::filesystem::file_size(absoluteInputPath),});
+                inputs.emplace_back(Input{absoluteInputPath, generateKey(relativeInputPath), relativeInputPath.generic_string(), std::filesystem::file_size(absoluteInputPath),});
             }
             else
             {
@@ -78,5 +78,5 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
         return left.key < right.key;
     });
 
-    return Configuration { .configurationFilePath = configurationFilePath, .inputs = std::move(inputs) };
+    return Configuration { configurationFilePath, std::move(inputs) };
 }
