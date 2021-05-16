@@ -1,5 +1,3 @@
 add_executable(resource_directory_tests main.cpp ../../unit_tests/main.cpp)
-add_test(NAME resource_directory_tests COMMAND resource_directory_tests)
-target_link_libraries(resource_directory_tests PRIVATE Catch2::Catch2WithMain)
-common_tests(resource_directory_tests)
 rescom_compile(resource_directory_tests ${CMAKE_CURRENT_SOURCE_DIR}/resources/files.rescom RECURSIVE)
+common_tests(resource_directory_tests)
