@@ -22,7 +22,7 @@ struct Configuration
 
     unsigned int tabulationSize = 4u;
 
-    static Configuration fromFile(std::filesystem::path const& configurationFilePath, bool recurse);
+    static Configuration fromFile(std::filesystem::path const& configurationFilePath);
 };
 
 #endif //RESCOM_CONFIGURATION_HPP

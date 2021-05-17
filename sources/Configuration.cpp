@@ -31,7 +31,7 @@ Input createInput(std::filesystem::path const& configurationDirectory, std::file
     };
 }
 
-void createInputs(std::filesystem::path const& configurationFilePath, size_t linePosition, std::string_view const& fileName, bool recursive, std::vector<Input>& results)
+void createInputs(std::filesystem::path const& configurationFilePath, size_t linePosition, std::string_view const& fileName, std::vector<Input>& results)
 {
     auto const configurationDirectory = configurationFilePath.parent_path();
     auto const absoluteInputPath{configurationDirectory / fileName};
@@ -45,42 +45,13 @@ void createInputs(std::filesystem::path const& configurationFilePath, size_t lin
     {
         results.emplace_back(createInput(configurationDirectory, absoluteInputPath));
     }
-    else if (std::filesystem::is_directory(absoluteInputPath))
-    {
-        std::stack<std::filesystem::path> directories;
-
-        directories.push(absoluteInputPath);
-        while (!directories.empty())
-        {
-            auto const currentDirectory = directories.top();
-
-            directories.pop();
-
-            std::filesystem::directory_iterator dirIt{currentDirectory};
-            std::filesystem::directory_iterator endDirIt;
-
-            while (dirIt != endDirIt)
-            {
-                if (std::filesystem::is_regular_file(*dirIt))
-                {
-                    results.emplace_back(createInput(configurationDirectory, *dirIt));
-                }
-                else if (recursive && std::filesystem::is_directory(*dirIt))
-                {
-                    directories.push(*dirIt);
-                }
-                // Everything excepted files and directories are just ignored
-                ++dirIt;
-            }
-        }
-    }
     else
     {
-        throw std::runtime_error(fmt::format("{}:{}: '{}' is not a file neither a directory", configurationFilePath.generic_string(), linePosition, absoluteInputPath.generic_string()));
+        throw std::runtime_error(fmt::format("{}:{}: '{}' is not a file", configurationFilePath.generic_string(), linePosition, absoluteInputPath.generic_string()));
     }
 }
 
-Configuration Configuration::fromFile(std::filesystem::path const& configurationFilePath, bool recurse)
+Configuration Configuration::fromFile(std::filesystem::path const& configurationFilePath)
 {
     std::ifstream configurationFile(configurationFilePath, std::ifstream::in);
     std::string lineBuffer;
@@ -99,7 +70,7 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
 
         if (!fileName.empty())
         {
-            createInputs(configurationFilePath, linePosition, fileName, recurse, inputs);
+            createInputs(configurationFilePath, linePosition, fileName, inputs);
         }
 
         ++linePosition;
