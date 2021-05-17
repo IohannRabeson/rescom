@@ -49,40 +49,24 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
 
     RescomFileParser parser(configurationDirectory);
 
-    std::vector<std::pair<std::optional<std::string>, std::filesystem::path>> elements = parser.parseInputs(configurationFile);
+    std::vector<RescomFileParser::Entry> entries = parser.parseInputs(configurationFile);
 
-    for (auto const& element : elements)
+    for (auto const& entry : entries)
     {
-        auto const& filePath = element.second;
-
-        if (!std::filesystem::is_regular_file(filePath))
-            throw std::runtime_error(fmt::format("{}: '{}' is not a file", configurationFilePath.generic_string(), filePath.generic_string()));
-        if (!std::filesystem::exists(filePath))
-            throw std::runtime_error(fmt::format("{}: '{}' does not exists", configurationFilePath.generic_string(), filePath.generic_string()));
+        if (!std::filesystem::is_regular_file(entry.filePath))
+            throw std::runtime_error(fmt::format("{}: '{}' is not a file", configurationFilePath.generic_string(), entry.filePath.generic_string()));
+        if (!std::filesystem::exists(entry.filePath))
+            throw std::runtime_error(fmt::format("{}: '{}' does not exists", configurationFilePath.generic_string(), entry.filePath.generic_string()));
     }
 
     std::vector<Input> inputs;
 
-    inputs.reserve(elements.size());
+    inputs.reserve(entries.size());
 
-    for (auto const& element : elements)
+    for (auto const& entry : entries)
     {
-        inputs.emplace_back(createInput(configurationDirectory, element.second, element.first));
+        inputs.emplace_back(createInput(configurationDirectory, entry.filePath, entry.key));
     }
-
-//    std::size_t linePosition = 1u;
-//
-//    while (std::getline(configurationFile, lineBuffer))
-//    {
-//        auto const fileName = cleanLine(lineBuffer, OneLineCommentStart);
-//
-//        if (!fileName.empty())
-//        {
-//            createInputs(configurationFilePath, linePosition, fileName, recurse, inputs);
-//        }
-//
-//        ++linePosition;
-//    }
 
     // We need to ensure the resources are ordered by the key otherwise
     // the access function (rescom::getResource) will not work.

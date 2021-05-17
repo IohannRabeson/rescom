@@ -44,3 +44,7 @@ TEST_CASE("input", "ConfigurationParserDev") {
     testParseStrings<grammar::Input>("\"key", {"\"key"});
 }
 
+TEST_CASE("keys", "ConfigurationParserDev") {
+    testParseStrings<grammar::Input>("\"key;yo;;", {"\"key", "yo;;"});
+}
+

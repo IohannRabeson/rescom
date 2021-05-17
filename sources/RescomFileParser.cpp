@@ -19,9 +19,9 @@ namespace
     }
 }
 
-std::vector<std::pair<std::optional<std::string>, std::filesystem::path>> RescomFileParser::parseInputs(std::istream& stream) const
+std::vector<RescomFileParser::Entry> RescomFileParser::parseInputs(std::istream& stream) const
 {
-    std::vector<std::pair<std::optional<std::string>, std::filesystem::path>> results;
+    std::vector<Entry> results;
     std::string buffer;
 
     while (std::getline(stream, buffer))
@@ -33,16 +33,16 @@ std::vector<std::pair<std::optional<std::string>, std::filesystem::path>> Rescom
 
         auto parseResult = lexy::parse<grammar::Input>(lexy::string_input(cleanedBuffer), lexy_ext::report_error);
         auto elements = parseResult.value();
-        std::pair<std::optional<std::string>, std::filesystem::path> result;
+        Entry result;
 
         switch (elements.size())
         {
             case 1u:
-                result.second = _configurationDirectory / std::filesystem::path{elements[0]};
+                result.filePath = _configurationDirectory / std::filesystem::path{elements[0]};
                 break;
             case 2u:
-                result.first = elements[0];
-                result.second = _configurationDirectory / std::filesystem::path{elements[1]};
+                result.key = elements[0];
+                result.filePath = _configurationDirectory / std::filesystem::path{elements[1]};
                 break;
         }
 

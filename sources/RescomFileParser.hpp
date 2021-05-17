@@ -47,9 +47,15 @@ class RescomFileParser
 {
     std::filesystem::path const _configurationDirectory;
 public:
+    struct Entry
+    {
+        std::optional<std::string> key;
+        std::filesystem::path filePath;
+    };
+
     explicit RescomFileParser(std::filesystem::path const& configurationDirectory);
 
-    std::vector<std::pair<std::optional<std::string>, std::filesystem::path>> parseInputs(std::istream& stream) const;
+    std::vector<Entry> parseInputs(std::istream& stream) const;
 };
 
 #endif //RESCOM_RESCOMFILEPARSER_HPP
