@@ -130,6 +130,7 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
         output << tab(2) << "template<class ForwardIt, class Compare>\n"
                << tab(2) << "constexpr ForwardIt lowerBound(ForwardIt first, ForwardIt last, char const* value, Compare compare)\n"
                << tab(2) << "{\n"
+               << tab(3) << "if (value == nullptr) return last;\n"
                << tab(3) << "typename std::iterator_traits<ForwardIt>::difference_type count;\n"
                << tab(3) << "typename std::iterator_traits<ForwardIt>::difference_type step;\n"
                << tab(3) << "count = std::distance(first, last);\n"
@@ -138,7 +139,7 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
                << tab(4) << "it = first; step = count / 2; std::advance(it, step);\n"
                << tab(4) << "if (compare(*it, value)) { first = ++it; count -= step + 1; } else { count = step; }\n"
                << tab(3) << "}\n"
-               << tab(3) << "return std::strcmp(value, first->key) == 0 ? first : last;\n"
+               << tab(3) << "return (first->key != nullptr && std::strcmp(value, first->key) == 0) ? first : last;\n"
                << tab(2) << "}\n";
     }
 
@@ -165,7 +166,8 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
                << tab() << "}\n";
     }
 
-    output << tab() << "inline constexpr bool contains(char const* key)\n"
+    output << "\n"
+           << tab() << "inline constexpr bool contains(char const* key)\n"
            << tab() << "{\n"
            << tab(2) << "return &getResource(key) != &details::NullResource;\n"
            << tab() << "}\n";

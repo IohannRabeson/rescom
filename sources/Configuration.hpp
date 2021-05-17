@@ -9,7 +9,8 @@ struct Input
 {
     std::filesystem::path filePath;
     std::string key;
-    std::uint64_t size;
+    std::uint64_t size = 0u;
+    std::uint64_t line = 0u;
 };
 
 struct Configuration
@@ -22,7 +23,7 @@ struct Configuration
 
     unsigned int tabulationSize = 4u;
 
-    static Configuration fromFile(std::filesystem::path const& configurationFilePath, bool recurse);
+    static Configuration fromFile(std::filesystem::path const& configurationFilePath);
 };
 
 #endif //RESCOM_CONFIGURATION_HPP

@@ -1,3 +1,0 @@
-add_executable(only_text_resources_tests main.cpp)
-rescom_compile(only_text_resources_tests ${CMAKE_CURRENT_SOURCE_DIR}/resources/files.rescom)
-common_tests(only_text_resources_tests)
