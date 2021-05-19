@@ -24,7 +24,7 @@ private:
 
     void writeFileHeader(std::ostream& output);
     void writeFileFooter(std::ostream& output);
-    void writeResource(Input const& input, std::vector<char> const& buffer, std::ostream& output);
+    void writeResource(Input const& input, unsigned int inputPosition, std::vector<char> const& buffer, std::ostream& output);
     void writeAccessFunction(std::ostream& output);
     CompilationResult writeResources(std::ostream& output);
 private:

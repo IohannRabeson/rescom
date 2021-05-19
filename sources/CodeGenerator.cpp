@@ -100,21 +100,26 @@ void CodeGenerator::writeFileFooter(std::ostream& output)
     output << "#endif // " << _headerProtectionMacroName << "\n";
 }
 
-void CodeGenerator::writeResource(Input const& input, std::vector<char> const& bytes, std::ostream& output)
+std::string makeResourceName(unsigned int i)
 {
-    output << tab(3) << "{\"" << input.key << "\", " << input.size << ", " << "\"";
+    return fmt::format("R{}", i);
+}
+
+void CodeGenerator::writeResource(Input const&, unsigned int inputPosition, std::vector<char> const& bytes, std::ostream& output)
+{
+    output << tab(2) << fmt::format("constexpr char const {}[] = {{", makeResourceName(inputPosition));
 
     output << std::hex;
-
-    for (auto const c : bytes) {
+    for (auto i = 0u; i < bytes.size(); ++i) {
+        if (i > 0u)
+            output << ", ";
         // Ensure the value printed is never negative by casting the byte to unsigned char
         // then convert to unsigned int to ensure operator << will print a hexadecimal number
         // and not a character.
-        output << "\\x" << static_cast<unsigned int>(static_cast<unsigned char>(c));
+        output << "'\\x" << static_cast<unsigned int>(static_cast<unsigned char>(bytes[i])) << "'";
     }
-
     output << std::dec;
-    output << "\" },\n";
+    output << "};\n";
 }
 
 /// Write the code to access to a specific resource.
@@ -125,7 +130,7 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
     output << tab(1) << "namespace details {\n";
     if (!_configuration.inputs.empty()) {
         output << tab(2) << "constexpr bool compareSlot(Resource const& slot, char const * key) { return std::string_view(slot.key) < key; }\n\n";
-        // Function lowerBound is an ugly copy-paste of https://en.cppreference.com/w/cpp/algorithm/lower_bound.
+        // Function lowerBound is almost an ugly copy-paste of https://en.cppreference.com/w/cpp/algorithm/lower_bound.
         // But I don't care, it's constexpr and it just works.
         output << tab(2) << "template<class ForwardIt, class Compare>\n"
                << tab(2) << "constexpr ForwardIt lowerBound(ForwardIt first, ForwardIt last, char const* value, Compare compare)\n"
@@ -144,7 +149,6 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
     }
 
     output << tab(2) << "static constexpr Resource const NullResource{nullptr, 0u, nullptr};\n";
-
     output << tab(1) << "} // namespace details\n\n";
 
     if (_configuration.inputs.empty())
@@ -165,7 +169,7 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
                << tab(2) << "return *it;\n"
                << tab() << "}\n";
     }
-
+    output << "\n";
     output << tab() << "inline constexpr bool contains(char const* key)\n"
            << tab() << "{\n"
            << tab(2) << "return &getResource(key) != &details::NullResource;\n"
@@ -212,17 +216,32 @@ CompilationResult CodeGenerator::writeResources(std::ostream& output)
         return CompilationResult::Ok;
 
     std::vector<char> buffer;
+    std::vector<std::string_view> keys;
 
     buffer.reserve(1024 * 16);
 
     output << tab(1) << "namespace details {\n";
     output << tab(2) << "constexpr unsigned int const ResourcesCount = " << _configuration.inputs.size() << ";\n";
+
+    // Write data
+    for (auto i = 0u; i < _configuration.inputs.size(); ++i)
+    {
+        auto const& input = _configuration.inputs[i];
+
+        loadFile(input.filePath, buffer);
+        writeResource(input, i, buffer, output);
+    }
+
     output << tab(2) << "constexpr Resource const Slots[ResourcesCount] = \n";
     output << tab(2) << "{\n";
-    for (auto const& input : _configuration.inputs)
+
+    // Write index
+    for (auto i = 0u; i < _configuration.inputs.size(); ++i)
     {
-        loadFile(input.filePath, buffer);
-        writeResource(input, buffer, output);
+        auto const& input = _configuration.inputs[i];
+        auto resourceName = makeResourceName(i);
+
+        output << tab(3) << "{\"" << input.key << "\", " << input.size << ", " << resourceName << "},\n";
     }
 
     output << tab(2) << "};\n";
