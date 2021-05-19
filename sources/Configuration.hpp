@@ -22,6 +22,7 @@ struct Configuration
 
     unsigned int tabulationSize = 4u;
 
+    static Configuration fromStream(std::istream& stream, std::filesystem::path const& configurationFilePath);
     static Configuration fromFile(std::filesystem::path const& configurationFilePath);
 };
 

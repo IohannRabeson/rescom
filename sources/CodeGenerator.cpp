@@ -53,21 +53,18 @@ std::string CodeGenerator::tab(unsigned int count) const
     return result;
 }
 
-CompilationResult CodeGenerator::compile(std::ostream& output)
+void CodeGenerator::compile(std::ostream& output)
 {
     writeFileHeader(output);
     writeResources(output);
     writeAccessFunction(output);
     writeFileFooter(output);
-
-    return CompilationResult::Ok;
 }
 
 void CodeGenerator::writeFileHeader(std::ostream& output)
 {
     static std::string const Includes[] = {
-        "<stdexcept>",
-        "<iterator>",
+        "<iterator>", // for std::iterator_traits
         "<string_view>",
         "<cstring>" // for std::strcmp
     };
@@ -210,10 +207,10 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
     output << tab() << "}\n";
 }
 
-CompilationResult CodeGenerator::writeResources(std::ostream& output)
+void CodeGenerator::writeResources(std::ostream& output)
 {
     if (_configuration.inputs.empty())
-        return CompilationResult::Ok;
+        return;
 
     std::vector<char> buffer;
     std::vector<std::string_view> keys;
@@ -246,6 +243,4 @@ CompilationResult CodeGenerator::writeResources(std::ostream& output)
 
     output << tab(2) << "};\n";
     output << tab(1) << "} // namespace details\n";
-
-    return CompilationResult::Ok;
 }

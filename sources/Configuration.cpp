@@ -62,9 +62,16 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
         throw std::runtime_error(fmt::format("unable to read '{}'", configurationFilePath.generic_string()));
     }
 
+    return fromStream(configurationFile, configurationFilePath);
+}
+
+Configuration Configuration::fromStream(std::istream& stream, std::filesystem::path const& configurationFilePath)
+{
+    std::string lineBuffer;
+    std::vector<Input> inputs;
     std::size_t linePosition = 1u;
 
-    while (std::getline(configurationFile, lineBuffer))
+    while (std::getline(stream, lineBuffer))
     {
         auto const fileName = cleanLine(lineBuffer, OneLineCommentStart);
 
