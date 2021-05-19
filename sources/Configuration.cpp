@@ -83,5 +83,11 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
         return left.key < right.key;
     });
 
+    // Ensure unique keys
+    inputs.erase(std::unique(inputs.begin(), inputs.end(), [](Input const& left, Input const& right)
+    {
+        return left.key == right.key;
+    }), inputs.end());
+
     return Configuration { configurationFilePath, std::move(inputs) };
 }
