@@ -107,7 +107,7 @@ std::string makeResourceName(unsigned int i)
 
 void CodeGenerator::writeResource(Input const&, unsigned int inputPosition, std::vector<char> const& bytes, std::ostream& output)
 {
-    output << tab(2) << fmt::format("constexpr char const {}[] = {{", makeResourceName(inputPosition));
+    output << tab(2) << fmt::format("static constexpr char const {}[] = {{", makeResourceName(inputPosition));
 
     output << std::hex;
     for (auto i = 0u; i < bytes.size(); ++i) {
@@ -221,7 +221,7 @@ CompilationResult CodeGenerator::writeResources(std::ostream& output)
     buffer.reserve(1024 * 16);
 
     output << tab(1) << "namespace details {\n";
-    output << tab(2) << "constexpr unsigned int const ResourcesCount = " << _configuration.inputs.size() << ";\n";
+    output << tab(2) << "static constexpr unsigned int const ResourcesCount = " << _configuration.inputs.size() << ";\n";
 
     // Write data
     for (auto i = 0u; i < _configuration.inputs.size(); ++i)
@@ -232,7 +232,7 @@ CompilationResult CodeGenerator::writeResources(std::ostream& output)
         writeResource(input, i, buffer, output);
     }
 
-    output << tab(2) << "constexpr Resource const Slots[ResourcesCount] = \n";
+    output << tab(2) << "static constexpr Resource const Slots[ResourcesCount] = \n";
     output << tab(2) << "{\n";
 
     // Write index
@@ -245,7 +245,7 @@ CompilationResult CodeGenerator::writeResources(std::ostream& output)
     }
 
     output << tab(2) << "};\n";
-    output << tab(1) << "} // namespace details\n";
+    output << tab(1) << "} // namespace details\n\n";
 
     return CompilationResult::Ok;
 }
