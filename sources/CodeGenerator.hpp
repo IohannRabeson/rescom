@@ -18,7 +18,7 @@ class CodeGenerator
 public:
     explicit CodeGenerator(Configuration const& configuration);
 
-    CompilationResult compile(std::ostream& output);
+    void compile(std::ostream& output);
 private:
     std::string tab(unsigned int count = 1) const;
 
@@ -26,7 +26,7 @@ private:
     void writeFileFooter(std::ostream& output);
     void writeResource(Input const& input, unsigned int inputPosition, std::vector<char> const& buffer, std::ostream& output);
     void writeAccessFunction(std::ostream& output);
-    CompilationResult writeResources(std::ostream& output);
+    void writeResources(std::ostream& output);
 private:
     Configuration const& _configuration;
     std::string const _tabulation;
