@@ -124,11 +124,12 @@ void CodeGenerator::writeResource(Input const&, unsigned int inputPosition, std:
 ///// keep the compilation time acceptable.
 void CodeGenerator::writeAccessFunction(std::ostream& output)
 {
+    // Print function lowerBound
+    // It's almost an ugly copy-paste of https://en.cppreference.com/w/cpp/algorithm/lower_bound.
+    // But I don't care, it's constexpr and it just works.
     output << tab(1) << "namespace details {\n";
     if (!_configuration.inputs.empty()) {
         output << tab(2) << "constexpr bool compareSlot(Resource const& slot, char const * key) { return std::string_view(slot.key) < key; }\n\n";
-        // Function lowerBound is almost an ugly copy-paste of https://en.cppreference.com/w/cpp/algorithm/lower_bound.
-        // But I don't care, it's constexpr and it just works.
         output << tab(2) << "template<class ForwardIt, class Compare>\n"
                << tab(2) << "constexpr ForwardIt lowerBound(ForwardIt first, ForwardIt last, char const* value, Compare compare)\n"
                << tab(2) << "{\n"
@@ -148,6 +149,9 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
     output << tab(2) << "static constexpr Resource const NullResource{nullptr, 0u, nullptr};\n";
     output << tab(1) << "} // namespace details\n\n";
 
+    output << "using ResourceIterator = Resource const*;\n";
+
+    // Print function rescom::getResource, if no resources always returns the null resource
     if (_configuration.inputs.empty())
     {
         output << tab() << "inline constexpr Resource const& getResource(char const*)\n"
@@ -167,11 +171,14 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
                << tab() << "}\n";
     }
     output << "\n";
+
+    // Print function rescom::contains
     output << tab() << "inline constexpr bool contains(char const* key)\n"
            << tab() << "{\n"
            << tab(2) << "return &getResource(key) != &details::NullResource;\n"
            << tab() << "}\n";
 
+    // Print function rescom::getText
     output << "\n"
            << tab() << "inline constexpr std::string_view getText(char const* key)\n"
            << tab() << "{\n"
@@ -180,30 +187,18 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
            << tab(2) << "return std::string_view{resource.bytes, resource.size};\n"
            << tab() << "}\n";
 
+    // Print rescom::begin
     output << "\n"
-           << tab() << "inline constexpr Resource const* begin()\n"
+           << tab() << "inline constexpr ResourceIterator begin()\n"
            << tab() << "{\n";
-    if (_configuration.inputs.empty())
-    {
-        output << tab(2) << "return &details::NullResource;\n";
-    }
-    else
-    {
-        output << tab(2) << "return std::begin(details::Slots);\n";
-    }
+    output << tab(2) << (_configuration.inputs.empty() ? "return &details::NullResource;\n" : "return std::begin(details::Slots);\n");
     output << tab() << "}\n";
 
+    // Print rescom::end
     output << "\n"
-           << tab() << "inline constexpr Resource const* end()\n"
+           << tab() << "inline constexpr ResourceIterator end()\n"
            << tab() << "{\n";
-    if (_configuration.inputs.empty())
-    {
-        output << tab(2) << "return &details::NullResource;\n";
-    }
-    else
-    {
-        output << tab(2) << "return std::end(details::Slots);\n";
-    }
+    output << tab(2) << (_configuration.inputs.empty() ? "return &details::NullResource;\n" : "return std::end(details::Slots);\n");
     output << tab() << "}\n";
 }
 
