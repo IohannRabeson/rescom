@@ -58,9 +58,7 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
     std::vector<Input> inputs;
 
     if (!configurationFile.is_open())
-    {
         throw std::runtime_error(fmt::format("unable to read '{}'", configurationFilePath.generic_string()));
-    }
 
     return fromStream(configurationFile, configurationFilePath);
 }

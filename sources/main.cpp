@@ -10,6 +10,8 @@
 #include "CodeGenerator.hpp"
 #include "GeneratedConstants.hpp"
 
+#include <fmt/format.h>
+
 std::ostream& selectOutputStream(std::ofstream& file, std::ostream& fallback)
 {
     return file.is_open() ? file : fallback;
@@ -36,13 +38,16 @@ int main(int argc, char** argv)
 
     std::filesystem::path const outputFilePath{parseResult.count("output") > 0 ? parseResult["output"].as<std::string>() : ""};
     std::filesystem::path const inputFilePath{parseResult["input"].as<std::string>()};
-
     std::ofstream outputFile{outputFilePath, std::ios::out};
 
     try
     {
+        if (!outputFile.is_open())
+            throw std::runtime_error(fmt::format("unable to open '{}' for writing"));
+
         auto configuration = Configuration::fromFile(inputFilePath);
         CodeGenerator c(configuration);
+
         c.compile(selectOutputStream(outputFile, std::cout));
     }
     catch (std::exception const& error)
