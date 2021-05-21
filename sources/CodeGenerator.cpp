@@ -149,7 +149,7 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
     output << tab(2) << "static constexpr Resource const NullResource{nullptr, 0u, nullptr};\n";
     output << tab(1) << "} // namespace details\n\n";
 
-    output << "using ResourceIterator = Resource const*;\n";
+    output << tab(1) << "using ResourceIterator = Resource const*;\n\n";
 
     // Print function rescom::getResource, if no resources always returns the null resource
     if (_configuration.inputs.empty())
