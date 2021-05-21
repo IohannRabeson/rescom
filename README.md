@@ -1,4 +1,7 @@
-# rescom [![CMake](https://github.com/IohannRabeson/rescom/actions/workflows/cmake.yml/badge.svg)](https://github.com/IohannRabeson/rescom/actions/workflows/cmake.yml)
+# rescom 
+[![CMake](https://github.com/IohannRabeson/rescom/actions/workflows/linux.yml/badge.svg)](https://github.com/IohannRabeson/rescom/actions/workflows/linux.yml)
+[![CMake](https://github.com/IohannRabeson/rescom/actions/workflows/macos.yml/badge.svg)](https://github.com/IohannRabeson/rescom/actions/workflows/macos.yml)
+[![CMake](https://github.com/IohannRabeson/rescom/actions/workflows/windows.yml/badge.svg)](https://github.com/IohannRabeson/rescom/actions/workflows/windows.yml)
 
 C++ resource compiler using CMake to embed files into the executable
 
