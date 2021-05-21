@@ -1,0 +1,6 @@
+#ifndef RESCOM_GENERATEDCONSTANTS_HPP
+#define RESCOM_GENERATEDCONSTANTS_HPP
+
+static constexpr char const* const RescomVersion = "@PROJECT_VERSION@";
+
+#endif //RESCOM_GENERATEDCONSTANTS_HPP
