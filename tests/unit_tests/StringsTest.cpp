@@ -24,3 +24,12 @@ TEST_CASE("upperCase", "StringTests")
     REQUIRE( toUpper("") == "" );
     REQUIRE( toUpper(" ") == " " );
 }
+
+TEST_CASE("format", "StringTests")
+{
+    REQUIRE( format("") == "" );
+    REQUIRE( format("{") == "{" );
+    REQUIRE( format("{}") == "" );
+    REQUIRE( format("{}", 123) == "123" );
+    REQUIRE( format("{} yo {}", 123, "456") == "123 yo 456" );
+}
