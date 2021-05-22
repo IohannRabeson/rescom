@@ -57,9 +57,7 @@ mkdir resources && echo "content.txt" > resources/rescom.list && cat "Hello worl
 #include <string>
 
 int main() {
-    rescom::Resource const& resource = rescom::getResource("content.txt");
-    std::string_view const text(resource.bytes, resource.size);
-    std::cout << text << "\n";
+    std::cout << rescom::getText("content.txt") << "\n";
     return 0;
 }
  ```
