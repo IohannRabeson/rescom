@@ -9,8 +9,7 @@
 #include "Configuration.hpp"
 #include "CodeGenerator.hpp"
 #include "GeneratedConstants.hpp"
-
-#include <fmt/format.h>
+#include "StringHelpers.hpp"
 
 std::ostream& selectOutputStream(std::ofstream& file, std::ostream& fallback)
 {
@@ -43,7 +42,7 @@ int main(int argc, char** argv)
     try
     {
         if (!outputFile.is_open())
-            throw std::runtime_error(fmt::format("unable to open '{}' for writing"));
+            throw std::runtime_error(format("unable to open '{}' for writing", outputFilePath.generic_string()));
 
         auto configuration = Configuration::fromFile(inputFilePath);
         CodeGenerator c(configuration);

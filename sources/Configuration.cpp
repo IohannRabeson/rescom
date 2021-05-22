@@ -8,8 +8,6 @@
 #include <stack>
 #include <algorithm>
 
-#include <fmt/core.h>
-
 static constexpr char const* const OneLineCommentStart = "#";
 
 namespace
@@ -38,7 +36,7 @@ void createInputs(std::filesystem::path const& configurationFilePath, size_t lin
 
     if (!std::filesystem::exists(absoluteInputPath))
     {
-        throw std::runtime_error(fmt::format("{}:{}: resource file not found '{}'\n -> file was expected to be here: {}", configurationFilePath.generic_string(), linePosition, fileName, absoluteInputPath.generic_string()));
+        throw std::runtime_error(format("{}:{}: resource file not found '{}'\n -> file was expected to be here: {}", configurationFilePath.generic_string(), linePosition, fileName, absoluteInputPath.generic_string()));
     }
 
     if (std::filesystem::is_regular_file(absoluteInputPath))
@@ -47,7 +45,7 @@ void createInputs(std::filesystem::path const& configurationFilePath, size_t lin
     }
     else
     {
-        throw std::runtime_error(fmt::format("{}:{}: '{}' is not a file", configurationFilePath.generic_string(), linePosition, absoluteInputPath.generic_string()));
+        throw std::runtime_error(format("{}:{}: '{}' is not a file", configurationFilePath.generic_string(), linePosition, absoluteInputPath.generic_string()));
     }
 }
 
@@ -58,7 +56,7 @@ Configuration Configuration::fromFile(std::filesystem::path const& configuration
     std::vector<Input> inputs;
 
     if (!configurationFile.is_open())
-        throw std::runtime_error(fmt::format("unable to read '{}'", configurationFilePath.generic_string()));
+        throw std::runtime_error(format("unable to read '{}'", configurationFilePath.generic_string()));
 
     return fromStream(configurationFile, configurationFilePath);
 }
