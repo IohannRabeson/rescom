@@ -1,3 +1,7 @@
+if(NOT RESCOM_DEV_MODE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
 configure_file(GeneratedConstants.hpp.in "${CMAKE_CURRENT_BINARY_DIR}/GeneratedConstants.hpp")
 add_executable(rescom main.cpp Configuration.cpp Configuration.hpp CodeGenerator.cpp CodeGenerator.hpp StringHelpers.hpp StringHelpers.cpp ${CMAKE_CURRENT_BINARY_DIR}/GeneratedConstants.hpp)
 target_link_libraries(rescom PRIVATE cxxopts fmt)
