@@ -43,7 +43,7 @@ std::string format(std::string_view const& fmt, A&& ... args)
     auto i = 0u;
     bool braceOpen = false;
     auto const expectedSize = fmt.size() + std::accumulate(argumentStrings.begin(), argumentStrings.end(), 0u,
-                                                           [](unsigned int c, auto const& str)
+                                                           [](std::size_t c, auto const& str)
                                                            {
                                                                 return c + str.size();
                                                            });
