@@ -3,7 +3,7 @@
 [![CMake](https://github.com/IohannRabeson/rescom/actions/workflows/macos.yml/badge.svg)](https://github.com/IohannRabeson/rescom/actions/workflows/macos.yml)
 [![CMake](https://github.com/IohannRabeson/rescom/actions/workflows/windows.yml/badge.svg)](https://github.com/IohannRabeson/rescom/actions/workflows/windows.yml)
 
-C++ resource compiler using CMake to embed files into the executable
+C++ resource compiler using CMake to embed files into executables
 
  - Tested on Windows, Linux and OSX
  - Generated code does not produce warnings
