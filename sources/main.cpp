@@ -11,6 +11,8 @@
 #include "GeneratedConstants.hpp"
 #include "StringHelpers.hpp"
 
+void releaseResults(cxxopts::ParseResult const& parseResult, std::ostringstream const& outputStream);
+
 std::ostream& selectOutputStream(std::ofstream& file, std::ostream& fallback)
 {
     return file.is_open() ? file : fallback;
@@ -35,19 +37,17 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    std::filesystem::path const outputFilePath{parseResult.count("output") > 0 ? parseResult["output"].as<std::string>() : ""};
     std::filesystem::path const inputFilePath{parseResult["input"].as<std::string>()};
-    std::ofstream outputFile{outputFilePath, std::ios::out};
+    std::ostringstream outputStream;
 
     try
     {
-        if (!outputFile.is_open())
-            throw std::runtime_error(format("unable to open '{}' for writing", outputFilePath.generic_string()));
-
         auto configuration = Configuration::fromFile(inputFilePath);
         CodeGenerator c(configuration);
 
-        c.compile(selectOutputStream(outputFile, std::cout));
+        c.compile(outputStream);
+
+        releaseResults(parseResult, outputStream);
     }
     catch (std::exception const& error)
     {
@@ -57,5 +57,23 @@ int main(int argc, char** argv)
     }
 
     return 0;
+}
+
+void releaseResults(cxxopts::ParseResult const& parseResult, std::ostringstream const& outputStream)
+{
+    if (parseResult.count("output") > 0)
+    {
+        std::filesystem::path const outputFilePath{parseResult["output"].as<std::string>()};
+        std::ofstream outputFile(outputFilePath, std::ios::out | std::ios::ate);
+
+        if (!outputFile.is_open())
+            throw std::runtime_error(format("unable to open '{}' for writing", outputFilePath.generic_string()));
+
+        outputFile << outputStream.str();
+    }
+    else
+    {
+        std::cout << outputStream.str();
+    }
 }
 
