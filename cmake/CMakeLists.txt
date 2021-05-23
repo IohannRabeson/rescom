@@ -31,3 +31,9 @@ function(warning_as_error TARGET_NAME)
             /WX /W4>
             )
 endfunction()
+
+macro(add_subdirectory_if_target_not_exists TARGET_NAME)
+    if (NOT TARGET ${TARGET_NAME})
+        add_subdirectory(${TARGET_NAME})
+    endif()
+endmacro()
