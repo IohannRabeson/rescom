@@ -14,10 +14,9 @@ class ConfigurationParser
 public:
     explicit ConfigurationParser(std::unique_ptr<FileSystem>&& fileSystem);
 
-    Configuration parse(std::istream& stream, std::filesystem::path const& configurationFilePath) const;
+    Configuration parseStream(std::istream& stream, std::filesystem::path const& configurationFilePath) const;
+    Configuration parseText(std::string const& text, std::filesystem::path const& configurationFilePath) const;
     Configuration parseFile(std::filesystem::path const& configurationFilePath) const;
-private:
-    void checkResourceFile(Input const& input, std::filesystem::path const& configurationFilePath) const;
 };
 
 #endif //RESCOM_CONFIGURATIONPARSER_HPP

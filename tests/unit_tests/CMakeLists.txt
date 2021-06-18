@@ -1,6 +1,5 @@
 set(RESCOM_SOURCES
     ${PROJECT_SOURCE_DIR}/sources/StringHelpers.cpp
-    ${PROJECT_SOURCE_DIR}/sources/Configuration.cpp
     ${PROJECT_SOURCE_DIR}/sources/FileSystem.cpp
     ${PROJECT_SOURCE_DIR}/sources/ConfigurationParser.cpp
 )

@@ -17,13 +17,13 @@ std::vector<char> makeBuffer(std::string_view text)
 
 Configuration parse(std::string const& text)
 {
-    std::istringstream iss{text};
     auto filesystem = std::make_unique<InMemoryFileSystem>();
     filesystem->add("a.res", makeBuffer("hello world"));
     filesystem->add("b.res", makeBuffer("salut salut"));
     filesystem->add("a ab.res", makeBuffer("poulets"));
+
     ConfigurationParser parser{std::move(filesystem)};
-    return parser.parse(iss, "memory");
+    return parser.parseText(text, "memory");
 }
 
 TEST_CASE("empty", "ConfigurationTests") {
