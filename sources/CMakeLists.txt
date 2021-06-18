@@ -3,7 +3,7 @@ if(NOT RESCOM_DEV_MODE)
 endif()
 
 configure_file(GeneratedConstants.hpp.in "${CMAKE_CURRENT_BINARY_DIR}/GeneratedConstants.hpp")
-add_executable(rescom main.cpp Configuration.cpp Configuration.hpp CodeGenerator.cpp CodeGenerator.hpp StringHelpers.hpp StringHelpers.cpp ${CMAKE_CURRENT_BINARY_DIR}/GeneratedConstants.hpp)
+add_executable(rescom main.cpp Configuration.cpp Configuration.hpp CodeGenerator.cpp CodeGenerator.hpp StringHelpers.hpp StringHelpers.cpp ${CMAKE_CURRENT_BINARY_DIR}/GeneratedConstants.hpp FileSystem.cpp FileSystem.hpp ConfigurationParser.cpp ConfigurationParser.hpp)
 target_link_libraries(rescom PRIVATE cxxopts)
 target_include_directories(rescom PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 set_target_properties(rescom PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS ON CXX_STANDARD_REQUIRED ON)
