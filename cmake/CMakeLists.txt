@@ -38,3 +38,20 @@ macro(add_subdirectory_if_target_not_exists TARGET_NAME)
         add_subdirectory(${TARGET_NAME})
     endif()
 endmacro()
+
+find_package(Git REQUIRED)
+
+execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+        OUTPUT_VARIABLE GIT_SHORT_COMMIT
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+message(STATUS "Git short commit: ${GIT_SHORT_COMMIT}")
+
+execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+    message(STATUS "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+endif()
