@@ -1,29 +1,35 @@
 #ifndef RESCOM_CONFIGURATION_HPP
 #define RESCOM_CONFIGURATION_HPP
 #include <filesystem>
-#include <vector>
 #include <string>
-#include <optional>
+#include <cstdint>
+#include <vector>
 
 struct Input
 {
+    // The absolute path of the input file
     std::filesystem::path filePath;
+    // The key of the resource
     std::string key;
+    // The size of the resource in bytes
     std::uint64_t size;
+    // The line where this input has been parsed
+    std::size_t line;
 };
 
+/// Defines files to embed as resources.
+/// Also specifies how the C++ code is generated.
 struct Configuration
 {
-    /// Path to the resource file path
+    /// Path to the configuration file path.
     std::filesystem::path configurationFilePath;
+
     /// Informations readed from the resource file path.
-    /// Those input are ordered by key.
+    /// Those inputs are ordered by key.
     std::vector<Input> inputs;
 
+    /// Tabulation size of the generated code.
     unsigned int tabulationSize = 4u;
-
-    static Configuration fromStream(std::istream& stream, std::filesystem::path const& configurationFilePath);
-    static Configuration fromFile(std::filesystem::path const& configurationFilePath);
 };
 
 #endif //RESCOM_CONFIGURATION_HPP

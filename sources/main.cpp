@@ -10,6 +10,8 @@
 #include "CodeGenerator.hpp"
 #include "GeneratedConstants.hpp"
 #include "StringHelpers.hpp"
+#include "ConfigurationParser.hpp"
+#include "FileSystem.hpp"
 
 void releaseResults(cxxopts::ParseResult const& parseResult, std::ostringstream const& outputStream);
 
@@ -42,10 +44,12 @@ int main(int argc, char** argv)
 
     try
     {
-        auto configuration = Configuration::fromFile(inputFilePath);
-        CodeGenerator c(configuration);
+        ConfigurationParser parser{std::make_unique<LocalFileSystem>()};
+        auto configuration = parser.parseFile(inputFilePath);
 
-        c.compile(outputStream);
+        CodeGenerator generator(configuration);
+
+        generator.compile(outputStream);
 
         releaseResults(parseResult, outputStream);
     }
