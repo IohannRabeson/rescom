@@ -51,7 +51,7 @@ std::string CodeGenerator::tab(unsigned int count) const
     return result;
 }
 
-void CodeGenerator::compile(std::ostream& output)
+void CodeGenerator::generate(std::ostream& output)
 {
     writeFileHeader(output);
     writeResources(output);
@@ -59,7 +59,7 @@ void CodeGenerator::compile(std::ostream& output)
     writeFileFooter(output);
 }
 
-void CodeGenerator::writeFileHeader(std::ostream& output)
+void CodeGenerator::writeFileHeader(std::ostream& output) const
 {
     static std::string const Includes[] = {
         "<iterator>", // for std::iterator_traits
@@ -87,7 +87,7 @@ void CodeGenerator::writeFileHeader(std::ostream& output)
            << tab(1) << "};\n\n";
 }
 
-void CodeGenerator::writeFileFooter(std::ostream& output)
+void CodeGenerator::writeFileFooter(std::ostream& output) const
 {
     auto resourceFileStem = toUpper(_configuration.configurationFilePath.stem().generic_string());
 
@@ -100,7 +100,7 @@ std::string makeResourceName(unsigned int i)
     return format("R{}", i);
 }
 
-void CodeGenerator::writeResource(Input const&, unsigned int inputPosition, std::vector<char> const& bytes, std::ostream& output)
+void CodeGenerator::writeResource(Input const&, unsigned int inputPosition, std::vector<char> const& bytes, std::ostream& output) const
 {
     output << tab(2) << format("static constexpr char const {}[] = {", makeResourceName(inputPosition));
 
@@ -120,7 +120,7 @@ void CodeGenerator::writeResource(Input const&, unsigned int inputPosition, std:
 /// Write the code to access to a specific resource.
 /// The generated code uses the fact resources are ordered by their key to use a constexpr version of std::lower_bound and
 ///// keep the compilation time acceptable.
-void CodeGenerator::writeAccessFunction(std::ostream& output)
+void CodeGenerator::writeAccessFunction(std::ostream& output) const
 {
     // Print function lowerBound
     // It's almost an ugly copy-paste of https://en.cppreference.com/w/cpp/algorithm/lower_bound.
@@ -200,7 +200,7 @@ void CodeGenerator::writeAccessFunction(std::ostream& output)
     output << tab() << "}\n";
 }
 
-void CodeGenerator::writeResources(std::ostream& output)
+void CodeGenerator::writeResources(std::ostream& output) const
 {
     if (_configuration.inputs.empty())
         return;

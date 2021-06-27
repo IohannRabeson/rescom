@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 
         CodeGenerator generator(configuration);
 
-        generator.compile(outputStream);
+        generator.generate(outputStream);
 
         releaseResults(parseResult, outputStream);
     }
