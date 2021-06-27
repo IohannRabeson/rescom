@@ -123,8 +123,8 @@ void CodeGenerator::writeResource(Input const&, unsigned int inputPosition, std:
 void CodeGenerator::writeAccessFunction(std::ostream& output) const
 {
     // Print function lowerBound
-    // It's almost an ugly copy-paste of https://en.cppreference.com/w/cpp/algorithm/lower_bound.
-    // But I don't care, it's constexpr and it just works.
+    // The content of the function is basically a copy-paste of https://en.cppreference.com/w/cpp/algorithm/lower_bound.
+    // I can't use std::lower_bound because it's not constexpr (yet, C++ adds a constexpr version, see #46).
     output << tab(1) << "namespace details {\n";
     if (!_configuration.inputs.empty()) {
         output << tab(2) << "constexpr bool compareSlot(Resource const& slot, char const * key) { return std::string_view(slot.key) < key; }\n\n";
@@ -160,9 +160,9 @@ void CodeGenerator::writeAccessFunction(std::ostream& output) const
     {
         output << tab() << "inline constexpr Resource const& getResource(char const* key)\n"
                << tab() << "{\n"
-               << tab(2) << "auto it = details::lowerBound(std::begin(details::Slots), std::end(details::Slots), key, details::compareSlot);\n"
+               << tab(2) << "auto it = details::lowerBound(std::begin(details::ResourcesIndex), std::end(details::ResourcesIndex), key, details::compareSlot);\n"
                << "\n"
-               << tab(2) << "if (it == std::end(details::Slots))\n"
+               << tab(2) << "if (it == std::end(details::ResourcesIndex))\n"
                << tab(3) << "return details::NullResource;\n"
                << "\n"
                << tab(2) << "return *it;\n"
@@ -189,14 +189,14 @@ void CodeGenerator::writeAccessFunction(std::ostream& output) const
     output << "\n"
            << tab() << "inline constexpr ResourceIterator begin()\n"
            << tab() << "{\n";
-    output << tab(2) << (_configuration.inputs.empty() ? "return &details::NullResource;\n" : "return std::begin(details::Slots);\n");
+    output << tab(2) << (_configuration.inputs.empty() ? "return &details::NullResource;\n" : "return std::begin(details::ResourcesIndex);\n");
     output << tab() << "}\n";
 
     // Print rescom::end
     output << "\n"
            << tab() << "inline constexpr ResourceIterator end()\n"
            << tab() << "{\n";
-    output << tab(2) << (_configuration.inputs.empty() ? "return &details::NullResource;\n" : "return std::end(details::Slots);\n");
+    output << tab(2) << (_configuration.inputs.empty() ? "return &details::NullResource;\n" : "return std::end(details::ResourcesIndex);\n");
     output << tab() << "}\n";
 }
 
@@ -222,10 +222,10 @@ void CodeGenerator::writeResources(std::ostream& output) const
         writeResource(input, i, buffer, output);
     }
 
-    output << tab(2) << "static constexpr Resource const Slots[ResourcesCount] = \n";
+    // Write index
+    output << tab(2) << "static constexpr Resource const ResourcesIndex[ResourcesCount] = \n";
     output << tab(2) << "{\n";
 
-    // Write index
     for (auto i = 0u; i < _configuration.inputs.size(); ++i)
     {
         auto const& input = _configuration.inputs[i];
