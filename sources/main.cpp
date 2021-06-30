@@ -7,7 +7,7 @@
 #include <cxxopts.hpp>
 
 #include "Configuration.hpp"
-#include "CodeGenerator.hpp"
+#include "NaiveCppGenerator.hpp"
 #include "GeneratedConstants.hpp"
 #include "StringHelpers.hpp"
 #include "ConfigurationParser.hpp"
@@ -20,14 +20,30 @@ std::ostream& selectOutputStream(std::ofstream& file, std::ostream& fallback)
     return file.is_open() ? file : fallback;
 }
 
+void registerCodeGenerators()
+{
+    registerCodeGenerator("naive", [](Configuration const& configuration){ return std::make_unique<NaiveCppGenerator>(configuration); }, true);
+}
+
+CodeGeneratorPointer createGenerator(cxxopts::ParseResult const& parseResult, Configuration const& configuration)
+{
+    if (parseResult["generator"].count() == 0)
+        return instanciateDefaultCodeGenerator(configuration);
+    else
+        return instanciateCodeGenerator(parseResult["generator"].as<std::string>(), configuration);
+}
+
 int main(int argc, char** argv)
 {
+    registerCodeGenerators();
+
     std::vector<std::string> inputs;
     cxxopts::Options options("rescom", "Resources compiler");
 
     options.add_options()
         ("i,input", "Input file", cxxopts::value<std::string>())
         ("o,output", "Output file", cxxopts::value<std::string>())
+        ("G,generator", "Generator", cxxopts::value<std::string>())
         ("version", "Print version", cxxopts::value<bool>())
         ;
 
@@ -41,15 +57,14 @@ int main(int argc, char** argv)
 
     std::filesystem::path const inputFilePath{parseResult["input"].as<std::string>()};
     std::ostringstream outputStream;
-
     try
     {
         ConfigurationParser parser{std::make_unique<LocalFileSystem>()};
         auto configuration = parser.parseFile(inputFilePath);
+        auto generator = createGenerator(parseResult, configuration);
 
-        CodeGenerator generator(configuration);
-
-        generator.generate(outputStream);
+        if (generator != nullptr)
+            generator->generate(outputStream);
 
         releaseResults(parseResult, outputStream);
     }
