@@ -3,8 +3,7 @@
 #include "StringHelpers.hpp"
 
 #include <map>
-#include <functional>
-
+#include <cassert>
 #include <stdexcept>
 
 std::map<std::string, std::function<CodeGeneratorPointer(Configuration const&)>> _factory;

@@ -3,6 +3,7 @@
 #include <ostream>
 #include <memory>
 #include <string>
+#include <functional>
 
 struct Configuration;
 
