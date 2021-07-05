@@ -1,4 +1,4 @@
-#include "NaiveCppGenerator.hpp"
+#include "LegacyCppCodeGenerator.hpp"
 #include "Configuration.hpp"
 #include "StringHelpers.hpp"
 
@@ -32,14 +32,14 @@ namespace
 
 static std::string const HeaderProtectionMacroPrefix = "RESCOM_GENERATED_FILE_";
 
-NaiveCppGenerator::NaiveCppGenerator(Configuration const& configuration)
+LegacyCppCodeGenerator::LegacyCppCodeGenerator(Configuration const& configuration)
 : _configuration(configuration)
 , _tabulation(configuration.tabulationSize, ' ')
 , _headerProtectionMacroName(HeaderProtectionMacroPrefix + toUpper(_configuration.configurationFilePath.stem().generic_string()))
 {
 }
 
-std::string NaiveCppGenerator::tab(unsigned int count) const
+std::string LegacyCppCodeGenerator::tab(unsigned int count) const
 {
     if (count == 0)
         return {};
@@ -54,7 +54,7 @@ std::string NaiveCppGenerator::tab(unsigned int count) const
     return result;
 }
 
-void NaiveCppGenerator::generate(std::ostream& output)
+void LegacyCppCodeGenerator::generate(std::ostream& output)
 {
     writeFileHeader(output);
     writeResources(output);
@@ -62,7 +62,7 @@ void NaiveCppGenerator::generate(std::ostream& output)
     writeFileFooter(output);
 }
 
-void NaiveCppGenerator::writeFileHeader(std::ostream& output) const
+void LegacyCppCodeGenerator::writeFileHeader(std::ostream& output) const
 {
     static std::string const Includes[] = {
         "<iterator>", // for std::iterator_traits
@@ -90,7 +90,7 @@ void NaiveCppGenerator::writeFileHeader(std::ostream& output) const
            << tab(1) << "};\n\n";
 }
 
-void NaiveCppGenerator::writeFileFooter(std::ostream& output) const
+void LegacyCppCodeGenerator::writeFileFooter(std::ostream& output) const
 {
     auto resourceFileStem = toUpper(_configuration.configurationFilePath.stem().generic_string());
 
@@ -103,7 +103,7 @@ std::string makeResourceName(unsigned int i)
     return format("R{}", i);
 }
 
-void NaiveCppGenerator::writeResource(Input const&, unsigned int inputPosition, std::vector<char> const& bytes, std::ostream& output) const
+void LegacyCppCodeGenerator::writeResource(Input const&, unsigned int inputPosition, std::vector<char> const& bytes, std::ostream& output) const
 {
     output << tab(2) << format("static constexpr char const {}[] = {", makeResourceName(inputPosition));
 
@@ -123,7 +123,7 @@ void NaiveCppGenerator::writeResource(Input const&, unsigned int inputPosition, 
 /// Write the code to access to a specific resource.
 /// The generated code uses the fact resources are ordered by their key to use a constexpr version of std::lower_bound and
 ///// keep the compilation time acceptable.
-void NaiveCppGenerator::writeAccessFunction(std::ostream& output) const
+void LegacyCppCodeGenerator::writeAccessFunction(std::ostream& output) const
 {
     // Print function lowerBound
     // The content of the function is basically a copy-paste of https://en.cppreference.com/w/cpp/algorithm/lower_bound.
@@ -203,7 +203,7 @@ void NaiveCppGenerator::writeAccessFunction(std::ostream& output) const
     output << tab() << "}\n";
 }
 
-void NaiveCppGenerator::writeResources(std::ostream& output) const
+void LegacyCppCodeGenerator::writeResources(std::ostream& output) const
 {
     if (_configuration.inputs.empty())
         return;

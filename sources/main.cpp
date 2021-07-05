@@ -7,7 +7,7 @@
 #include <cxxopts.hpp>
 
 #include "Configuration.hpp"
-#include "NaiveCppGenerator.hpp"
+#include "LegacyCppCodeGenerator.hpp"
 #include "GeneratedConstants.hpp"
 #include "StringHelpers.hpp"
 #include "ConfigurationParser.hpp"
@@ -22,7 +22,7 @@ std::ostream& selectOutputStream(std::ofstream& file, std::ostream& fallback)
 
 void registerCodeGenerators()
 {
-    registerCodeGenerator("naive", [](Configuration const& configuration){ return std::make_unique<NaiveCppGenerator>(configuration); }, true);
+    registerCodeGenerator("legacy", [](Configuration const& configuration){ return std::make_unique<LegacyCppCodeGenerator>(configuration); }, true);
 }
 
 CodeGeneratorPointer createGenerator(cxxopts::ParseResult const& parseResult, Configuration const& configuration)
@@ -57,6 +57,7 @@ int main(int argc, char** argv)
 
     std::filesystem::path const inputFilePath{parseResult["input"].as<std::string>()};
     std::ostringstream outputStream;
+
     try
     {
         ConfigurationParser parser{std::make_unique<LocalFileSystem>()};

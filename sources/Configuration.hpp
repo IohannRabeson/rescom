@@ -4,7 +4,7 @@
 #include <string>
 #include <cstdint>
 #include <vector>
-#include "NaiveCppGenerator.hpp"
+#include "LegacyCppCodeGenerator.hpp"
 
 struct Input
 {

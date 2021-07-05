@@ -1,5 +1,5 @@
 #include "CodeGenerator.hpp"
-#include "NaiveCppGenerator.hpp"
+#include "LegacyCppCodeGenerator.hpp"
 #include "StringHelpers.hpp"
 
 #include <map>

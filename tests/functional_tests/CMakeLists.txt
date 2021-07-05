@@ -1,1 +1,1 @@
-add_subdirectory(naive_cpp_generator)
+add_subdirectory(legacy_cpp_generator)

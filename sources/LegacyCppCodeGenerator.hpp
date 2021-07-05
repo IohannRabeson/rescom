@@ -1,5 +1,5 @@
-#ifndef RESCOM_NAIVECPPGENERATOR_HPP
-#define RESCOM_NAIVECPPGENERATOR_HPP
+#ifndef RESCOM_LEGACYCPPCODEGENERATOR_HPP
+#define RESCOM_LEGACYCPPCODEGENERATOR_HPP
 #include <ostream>
 #include <vector>
 #include <string>
@@ -9,10 +9,13 @@
 struct Configuration;
 struct Input;
 
-class NaiveCppGenerator : public CodeGenerator
+/// \brief Legacy C++ code generator
+/// This code generator produce a code allowing to read embedded resources at runtime only.
+/// It requires C++17.
+class LegacyCppCodeGenerator : public CodeGenerator
 {
 public:
-    explicit NaiveCppGenerator(Configuration const& configuration);
+    explicit LegacyCppCodeGenerator(Configuration const& configuration);
 
 private:
     void generate(std::ostream& output) override;
@@ -30,4 +33,4 @@ private:
     std::string const _headerProtectionMacroName;
 };
 
-#endif //RESCOM_NAIVECPPGENERATOR_HPP
+#endif //RESCOM_LEGACYCPPCODEGENERATOR_HPP
