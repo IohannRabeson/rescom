@@ -4,16 +4,17 @@
 #include <string>
 #include <cstdint>
 #include <vector>
+#include "LegacyCppCodeGenerator.hpp"
 
 struct Input
 {
-    // The absolute path of the input file
+    /// The absolute path of the input file
     std::filesystem::path filePath;
-    // The key of the resource
+    /// The key of the resource
     std::string key;
-    // The size of the resource in bytes
+    /// The size of the resource in bytes
     std::uint64_t size;
-    // The line where this input has been parsed
+    /// The line where this input has been parsed
     std::size_t line;
 };
 

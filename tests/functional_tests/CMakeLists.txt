@@ -1,11 +1,1 @@
-macro (common_tests TARGET_NAME)
-    warning_as_error(${TARGET_NAME})
-    set_target_properties(${TARGET_NAME} PROPERTIES CXX_STANDARD 17 CXX_EXTENSIONS ON CXX_STANDARD_REQUIRED ON)
-    add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
-    target_link_libraries(${TARGET_NAME} PRIVATE Catch2::Catch2WithMain)
-endmacro()
-
-add_subdirectory(empty_tests)
-add_subdirectory(non_empty_tests)
-add_subdirectory(comments_tests)
-add_subdirectory(duplicate_tests)
+add_subdirectory(legacy_cpp_generator)

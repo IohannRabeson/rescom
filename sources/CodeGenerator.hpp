@@ -1,36 +1,24 @@
 #ifndef RESCOM_CODEGENERATOR_HPP
 #define RESCOM_CODEGENERATOR_HPP
 #include <ostream>
-#include <vector>
+#include <memory>
 #include <string>
+#include <functional>
 
 struct Configuration;
-struct Input;
-
-enum CompilationResult
-{
-    Ok,
-    Error,
-};
 
 class CodeGenerator
 {
 public:
-    explicit CodeGenerator(Configuration const& configuration);
+    virtual ~CodeGenerator() = default;
 
-    void compile(std::ostream& output);
-private:
-    std::string tab(unsigned int count = 1) const;
-
-    void writeFileHeader(std::ostream& output);
-    void writeFileFooter(std::ostream& output);
-    void writeResource(Input const& input, unsigned int inputPosition, std::vector<char> const& buffer, std::ostream& output);
-    void writeAccessFunction(std::ostream& output);
-    void writeResources(std::ostream& output);
-private:
-    Configuration const& _configuration;
-    std::string const _tabulation;
-    std::string const _headerProtectionMacroName;
+    virtual void generate(std::ostream& output) = 0;
 };
+
+using CodeGeneratorPointer = std::unique_ptr<CodeGenerator>;
+
+void registerCodeGenerator(std::string const& key, std::function<CodeGeneratorPointer(Configuration const&)>&& creator, bool setDefault = false);
+CodeGeneratorPointer instanciateCodeGenerator(std::string const& key, Configuration const& configuration);
+CodeGeneratorPointer instanciateDefaultCodeGenerator(Configuration const& configuration);
 
 #endif //RESCOM_CODEGENERATOR_HPP
