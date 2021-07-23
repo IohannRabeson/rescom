@@ -7,7 +7,6 @@ C++ resource compiler using CMake to embed files into executables
 
  - Tested on Windows, Linux and OSX
  - Generated code does not produce warnings
- - Resources can be used at compile time (rescom::getResource is constexpr)
  - Easy to use and to integrate with CMake
 
 ## Requirements
