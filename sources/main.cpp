@@ -101,33 +101,33 @@ bool skip(Configuration const& configuration, std::filesystem::path const& witne
 
 int main(int argc, char** argv)
 {
-    registerCodeGenerators();
-
-    std::vector<std::string> inputs;
-    cxxopts::Options options("rescom", "Resources compiler");
-
-    options.add_options()
-        ("i,input", "Input file", cxxopts::value<std::string>())
-        ("o,output", "Output file", cxxopts::value<std::string>())
-        ("G,generator", "Generator", cxxopts::value<std::string>())
-        ("version", "Print version", cxxopts::value<bool>())
-        ("witness", "Witness file", cxxopts::value<std::string>())
-        ;
-
-    auto parseResult = options.parse(argc, argv);
-
-    if (parseResult["version"].count() > 0)
-    {
-        std::cout << "rescom version " << RescomVersion << "\n";
-        return 0;
-    }
-
-    std::filesystem::path const inputFilePath{parseResult["input"].as<std::string>()};
-    std::optional<std::filesystem::path> witnessFilePath{getFilePath(parseResult, "witness")};
-    std::ostringstream outputStream;
-
     try
     {
+        registerCodeGenerators();
+
+        std::vector<std::string> inputs;
+        cxxopts::Options options("rescom", "Resources compiler");
+
+        options.add_options()
+            ("i,input", "Input file", cxxopts::value<std::string>())
+            ("o,output", "Output file", cxxopts::value<std::string>())
+            ("G,generator", "Generator", cxxopts::value<std::string>())
+            ("version", "Print version", cxxopts::value<bool>())
+            ("witness", "Witness file", cxxopts::value<std::string>())
+            ;
+
+        auto parseResult = options.parse(argc, argv);
+
+        if (parseResult["version"].count() > 0)
+        {
+            std::cout << "rescom version " << RescomVersion << "\n";
+            return 0;
+        }
+
+        std::filesystem::path const inputFilePath{parseResult["input"].as<std::string>()};
+        std::optional<std::filesystem::path> witnessFilePath{getFilePath(parseResult, "witness")};
+        std::ostringstream outputStream;
+
         ConfigurationParser parser{std::make_unique<LocalFileSystem>()};
         auto configuration = parser.parseFile(inputFilePath);
 
