@@ -136,7 +136,7 @@ int main(int argc, char** argv)
 
         if (witnessFilePath.has_value() && skip(configuration, *witnessFilePath))
         {
-            std::cout << "Nothing changed\n";
+            // Nothing changed since the last run.
             return 0;
         }
 

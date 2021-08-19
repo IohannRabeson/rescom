@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 3.9)
 
-project(rescom VERSION 0.0.0)
+project(rescom VERSION 0.0.1)
 
 if (RESCOM_TEST)
     enable_testing()
