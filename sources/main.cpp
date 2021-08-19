@@ -64,6 +64,9 @@ std::vector<std::string> computeInputHashes(Configuration const& configuration)
 
 std::vector<std::string> readHashesFile(std::filesystem::path const& filePath)
 {
+    if (!std::filesystem::exists(filePath))
+        return {};
+
     std::ifstream file{filePath, std::ios::in};
 
     if (!file.is_open())
